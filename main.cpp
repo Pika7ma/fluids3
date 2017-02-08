@@ -52,7 +52,7 @@
 #include "fluid_defs.h"
 
 #ifdef BUILD_CUDA
-	#include "fluid_system_host.cuh"	
+	#include "fluid_system_host.cuh"
 #endif
 #include "fluid_system.h"
 

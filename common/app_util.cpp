@@ -75,6 +75,7 @@
  */
 
 #include "app_util.h"
+#include <functional>
 
 // Globals
 nvDraw	g_2D;

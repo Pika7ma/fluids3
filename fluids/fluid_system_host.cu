@@ -55,7 +55,7 @@ extern void app_printf ( char* format, ... );
 extern void app_printEXIT ( char* format, ... );
 extern char app_getch ();
 
-#include "fluid_system_host.cuh"		
+#include "fluid_system_host.cuh"
 #include "fluid_system_kern.cuh"
 
 FluidParams		fcuda;		// CPU Fluid params
@@ -68,8 +68,7 @@ bool cudaCheck ( cudaError_t status, char* msg )
 	if ( status != cudaSuccess ) {
 		app_printf ( "CUDA ERROR: %s\n", cudaGetErrorString ( status ) );
 		app_getch ();
-
-		MessageBox ( NULL, cudaGetErrorString ( status), msg, MB_OK );
+		MessageBoxA ( NULL, cudaGetErrorString ( status ), msg, MB_OK );
 		return false;
 	} else {
 		//app_printf ( "%s. OK.\n", msg );
@@ -333,7 +332,7 @@ void InsertParticlesCUDA ( uint* gcell, uint* ccell, int* gcnt )
 {
 	cudaMemset ( fbuf.mgridcnt, 0,			fcuda.gridTotal * sizeof(int));
 
-	insertParticles<<< fcuda.numBlocks, fcuda.numThreads>>> ( fbuf, fcuda.pnum );
+	insertParticles <<< fcuda.numBlocks, fcuda.numThreads>>> ( fbuf, fcuda.pnum );
 	cudaError_t error = cudaGetLastError();
 	if (error != cudaSuccess) {
 		fprintf ( stderr,  "CUDA ERROR: InsertParticlesCUDA: %s\n", cudaGetErrorString(error) );
@@ -397,7 +396,7 @@ void CountingSortFullCUDA ( uint* ggrid )
 
 void ComputePressureCUDA ()
 {
-	computePressure<<< fcuda.numBlocks, fcuda.numThreads>>> ( fbuf, fcuda.pnum );	
+	computePressure <<< fcuda.numBlocks, fcuda.numThreads>>> ( fbuf, fcuda.pnum );	
     cudaError_t error = cudaGetLastError();
 	if (error != cudaSuccess) {
 		fprintf ( stderr, "CUDA ERROR: ComputePressureCUDA: %s\n", cudaGetErrorString(error) );
@@ -406,7 +405,7 @@ void ComputePressureCUDA ()
 }
 void ComputeQueryCUDA ()
 {
-	computeQuery<<< fcuda.numBlocks, fcuda.numThreads>>> ( fbuf, fcuda.pnum );	
+	computeQuery <<< fcuda.numBlocks, fcuda.numThreads>>> ( fbuf, fcuda.pnum );	
     cudaError_t error = cudaGetLastError();
 	if (error != cudaSuccess) {
 		fprintf ( stderr, "CUDA ERROR: ComputePressureCUDA: %s\n", cudaGetErrorString(error) );
@@ -427,7 +426,7 @@ void CountActiveCUDA ()
 		cudaMemcpyToSymbol ( gridActive, &fcuda.gridActive, sizeof(int) );
 	#endif */
 	
-	countActiveCells<<< blocks, threads >>> ( fbuf, fcuda.gridTotal );
+	countActiveCells <<< blocks, threads >>> ( fbuf, fcuda.gridTotal );
 	cudaThreadSynchronize ();
 
 	cudaMemcpyFromSymbol ( &fcuda.gridActive, "gridActive", sizeof(int) );
@@ -445,7 +444,7 @@ void ComputePressureGroupCUDA ()
 		blocks.y = (fcuda.gridActive / 4096 )+1;
 		blocks.z = 1;
 
-		computePressureGroup<<< blocks, threads >>> ( fbuf, fcuda.pnum );	
+		computePressureGroup <<< blocks, threads >>> ( fbuf, fcuda.pnum );	
 		cudaError_t error = cudaGetLastError();
 		if (error != cudaSuccess) {
 			fprintf ( stderr, "CUDA ERROR: ComputePressureGroupCUDA: %s\n", cudaGetErrorString(error) );
@@ -456,7 +455,7 @@ void ComputePressureGroupCUDA ()
 
 void ComputeForceCUDA ()
 {
-	computeForce<<< fcuda.numBlocks, fcuda.numThreads>>> ( fbuf, fcuda.pnum );
+	computeForce <<< fcuda.numBlocks, fcuda.numThreads>>> ( fbuf, fcuda.pnum );
     cudaError_t error = cudaGetLastError();
 	if (error != cudaSuccess) {
 		fprintf ( stderr,  "CUDA ERROR: ComputeForceCUDA: %s\n", cudaGetErrorString(error) );
@@ -466,7 +465,7 @@ void ComputeForceCUDA ()
 
 void AdvanceCUDA ( float tm, float dt, float ss )
 {
-	advanceParticles<<< fcuda.numBlocks, fcuda.numThreads>>> ( tm, dt, ss, fbuf, fcuda.pnum );
+	advanceParticles <<< fcuda.numBlocks, fcuda.numThreads>>> ( tm, dt, ss, fbuf, fcuda.pnum );
 	cudaError_t error = cudaGetLastError();
 	if (error != cudaSuccess) {
 		fprintf ( stderr,  "CUDA ERROR: AdvanceCUDA: %s\n", cudaGetErrorString(error) );
@@ -618,7 +617,7 @@ void prescanArrayRecursive (float *outArray, const float *inArray, int numElemen
     
     if (numEltsLastBlock != numEltsPerBlock) {
         np2LastBlock = 1;
-        if(!isPowerOfTwo(numEltsLastBlock)) numThreadsLastBlock = floorPow2(numEltsLastBlock);            
+        if(!isPowerOfTwo(numEltsLastBlock)) numThreadsLastBlock = floorPow2(numEltsLastBlock);
         unsigned int extraSpace = (2 * numThreadsLastBlock) / NUM_BANKS;
         sharedMemLastBlock = sizeof(float) * (2 * numThreadsLastBlock + extraSpace);
     }
@@ -638,9 +637,9 @@ void prescanArrayRecursive (float *outArray, const float *inArray, int numElemen
 
     // execute the scan
     if (numBlocks > 1) {
-        prescan<true, false><<< grid, threads, sharedMemSize >>> (outArray, inArray,  g_scanBlockSums[level], numThreads * 2, 0, 0);
+        prescan<true, false> <<< grid, threads, sharedMemSize >>> (outArray, inArray,  g_scanBlockSums[level], numThreads * 2, 0, 0);
         if (np2LastBlock) {
-            prescan<true, true><<< 1, numThreadsLastBlock, sharedMemLastBlock >>> (outArray, inArray, g_scanBlockSums[level], numEltsLastBlock, numBlocks - 1, numElements - numEltsLastBlock);
+            prescan<true, true> <<< 1, numThreadsLastBlock, sharedMemLastBlock >>> (outArray, inArray, g_scanBlockSums[level], numEltsLastBlock, numBlocks - 1, numElements - numEltsLastBlock);
         }
 
         // After scanning all the sub-blocks, we are mostly done.  But now we 
@@ -650,14 +649,14 @@ void prescanArrayRecursive (float *outArray, const float *inArray, int numElemen
         // recursive (CPU) call
         prescanArrayRecursive (g_scanBlockSums[level], g_scanBlockSums[level], numBlocks, level+1);
 
-        uniformAdd<<< grid, threads >>> (outArray, g_scanBlockSums[level], numElements - numEltsLastBlock, 0, 0);
+        uniformAdd <<< grid, threads >>> (outArray, g_scanBlockSums[level], numElements - numEltsLastBlock, 0, 0);
         if (np2LastBlock) {
-            uniformAdd<<< 1, numThreadsLastBlock >>>(outArray, g_scanBlockSums[level], numEltsLastBlock, numBlocks - 1, numElements - numEltsLastBlock);
+            uniformAdd <<< 1, numThreadsLastBlock >>>(outArray, g_scanBlockSums[level], numEltsLastBlock, numBlocks - 1, numElements - numEltsLastBlock);
         }
     } else if (isPowerOfTwo(numElements)) {
-        prescan<false, false><<< grid, threads, sharedMemSize >>> (outArray, inArray, 0, numThreads * 2, 0, 0);
+        prescan<false, false> <<< grid, threads, sharedMemSize >>> (outArray, inArray, 0, numThreads * 2, 0, 0);
     } else {
-        prescan<false, true><<< grid, threads, sharedMemSize >>> (outArray, inArray, 0, numElements, 0, 0);
+        prescan<false, true> <<< grid, threads, sharedMemSize >>> (outArray, inArray, 0, numElements, 0, 0);
     }
 }
 
@@ -705,9 +704,9 @@ void prescanArrayRecursiveInt (int *outArray, const int *inArray, int numElement
 
     // execute the scan
     if (numBlocks > 1) {
-        prescanInt <true, false><<< grid, threads, sharedMemSize >>> (outArray, inArray,  g_scanBlockSumsInt[level], numThreads * 2, 0, 0);
+        prescanInt <true, false> <<< grid, threads, sharedMemSize >>> (outArray, inArray,  g_scanBlockSumsInt[level], numThreads * 2, 0, 0);
         if (np2LastBlock) {
-            prescanInt <true, true><<< 1, numThreadsLastBlock, sharedMemLastBlock >>> (outArray, inArray, g_scanBlockSumsInt[level], numEltsLastBlock, numBlocks - 1, numElements - numEltsLastBlock);
+            prescanInt <true, true> <<< 1, numThreadsLastBlock, sharedMemLastBlock >>> (outArray, inArray, g_scanBlockSumsInt[level], numEltsLastBlock, numBlocks - 1, numElements - numEltsLastBlock);
         }
 
         // After scanning all the sub-blocks, we are mostly done.  But now we 
@@ -722,9 +721,9 @@ void prescanArrayRecursiveInt (int *outArray, const int *inArray, int numElement
             uniformAddInt <<< 1, numThreadsLastBlock >>>(outArray, g_scanBlockSumsInt[level], numEltsLastBlock, numBlocks - 1, numElements - numEltsLastBlock);
         }
     } else if (isPowerOfTwo(numElements)) {
-        prescanInt <false, false><<< grid, threads, sharedMemSize >>> (outArray, inArray, 0, numThreads * 2, 0, 0);
+        prescanInt <false, false> <<< grid, threads, sharedMemSize >>> (outArray, inArray, 0, numThreads * 2, 0, 0);
     } else {
-        prescanInt <false, true><<< grid, threads, sharedMemSize >>> (outArray, inArray, 0, numElements, 0, 0);
+        prescanInt <false, true> <<< grid, threads, sharedMemSize >>> (outArray, inArray, 0, numElements, 0, 0);
     }
 }
 

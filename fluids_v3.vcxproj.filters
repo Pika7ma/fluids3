@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="fluids\fluid_system.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="common\GLEW\glew.c">
       <Filter>glew</Filter>
     </ClCompile>
@@ -15,6 +14,7 @@
     <ClCompile Include="common\xml_settings.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fluids\fluid_defs.h" />
@@ -48,10 +48,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="fluids\fluid_system_host.cu" />
-    <CustomBuild Include="fluids\fluid_system_kern.cu" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="fluids\fluid_system_host.cuh" />
     <None Include="fluids\fluid_system_kern.cuh" />
     <None Include="fluids\prefix_sum.cu" />
@@ -66,5 +62,9 @@
     <Filter Include="common">
       <UniqueIdentifier>{c2497ce4-bcf7-4c13-b63d-7b9ec69e44ed}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="fluids\fluid_system_kern.cu" />
+    <CudaCompile Include="fluids\fluid_system_host.cu" />
   </ItemGroup>
 </Project>
