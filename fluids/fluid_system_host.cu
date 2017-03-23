@@ -403,7 +403,7 @@ void ComputePressureCUDA ()
 	}    
 	cudaThreadSynchronize ();
 }
-void ComputeQueryCUDA ()
+/*void ComputeQueryCUDA ()																//T: useless
 {
 	computeQuery <<< fcuda.numBlocks, fcuda.numThreads>>> ( fbuf, fcuda.pnum );	
     cudaError_t error = cudaGetLastError();
@@ -411,9 +411,9 @@ void ComputeQueryCUDA ()
 		fprintf ( stderr, "CUDA ERROR: ComputePressureCUDA: %s\n", cudaGetErrorString(error) );
 	}    
 	cudaThreadSynchronize ();
-}
+}*/
 
-void CountActiveCUDA ()
+/*void CountActiveCUDA ()				//T: useless
 {
 	int threads = 1;
 	int blocks = 1;
@@ -425,14 +425,14 @@ void CountActiveCUDA ()
 	#else
 		cudaMemcpyToSymbol ( gridActive, &fcuda.gridActive, sizeof(int) );
 	#endif */
-	
+/*	
 	countActiveCells <<< blocks, threads >>> ( fbuf, fcuda.gridTotal );
 	cudaThreadSynchronize ();
 
 	cudaMemcpyFromSymbol ( &fcuda.gridActive, "gridActive", sizeof(int) );
 	
 	app_printf ( "Active cells: %d\n", fcuda.gridActive );
-}
+}*/
 
 void ComputePressureGroupCUDA ()
 {

@@ -186,7 +186,7 @@ __global__ void countingSortFull ( bufList buf, int pnum )
 }
 
 // ***** UNUSED CODE (not working) ******
-__global__ void countActiveCells ( bufList buf, int pnum )
+/*__global__ void countActiveCells ( bufList buf, int pnum )					//T: useless
 {	
 	if ( threadIdx.x == 0 ) {		
 		// use only one processor
@@ -211,7 +211,7 @@ __global__ void countActiveCells ( bufList buf, int pnum )
 		// gridActive = cnt;
 	}
 	__syncthreads();
-}
+}*/
 
 
 __device__ float contributePressure ( int i, float3 p, int cell, bufList buf )
@@ -228,10 +228,10 @@ __device__ float contributePressure ( int i, float3 p, int cell, bufList buf )
 	int cfirst = buf.mgridoff[ cell ];
 	int clast = cfirst + buf.mgridcnt[ cell ];
 	
-	for ( int cndx = cfirst; cndx < clast; cndx++ ) {
+	for ( int cndx = cfirst; cndx < clast; ++cndx ) {
 		dist = p - buf.mpos[ buf.mgrid[cndx] ];
 		dsq = (dist.x*dist.x + dist.y*dist.y + dist.z*dist.z);
-		if ( dsq < r2 && dsq >= 0.0) {
+		if ( dsq < r2 ) {
 			c = (r2 - dsq)*d2;
 			sum += c * c * c;				
 		} 
@@ -262,12 +262,13 @@ __global__ void computePressure ( bufList buf, int pnum )
 	// Compute Density & Pressure
 	sum = sum * simData.pmass * simData.poly6kern;
 	if ( sum == 0.0 ) sum = 1.0;
-	buf.mpress[ i ] = ( sum - simData.prest_dens ) * simData.pintstiff;
+	//buf.mpress[ i ] = ( sum - simData.prest_dens ) * simData.pintstiff;			//T: less accurate pressure solver
+	buf.mpress[i] = (pow(sum / simData.prest_dens, 7) - 1) * simData.pintstiff;		//T: more accurate pressure solver
 	buf.mdensity[ i ] = 1.0f / sum;
 }
 
 		
-__global__ void computeQuery ( bufList buf, int pnum )
+/*__global__ void computeQuery ( bufList buf, int pnum )							//T: useless
 {
 	uint i = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;	// particle index				
 	if ( i >= pnum ) return;
@@ -286,7 +287,7 @@ __global__ void computeQuery ( bufList buf, int pnum )
 	}
 	__syncthreads();
 	
-}
+}*/
 
 /*FindNeighbors
 int cid = blockIdx.x * blockSize.x + blockIdx.y;   // cluster id	
