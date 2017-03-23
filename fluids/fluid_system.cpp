@@ -1033,19 +1033,20 @@ int FluidSystem::AddNeighbor( int i, int j, float d )
 //    (k = number of cells, gs = cell size, d = simulation scale)
 void FluidSystem::SetupGridAllocate ( Vector3DF min, Vector3DF max, float sim_scale, float cell_size, float border )
 {
-	float world_cellsize = cell_size / sim_scale;
+	float world_cellsize = cell_size / sim_scale; // M: World Cell Size | illustrates the length of each cell in a real world
 	
 	m_GridMin = min;
 	m_GridMax = max;
 	m_GridSize = m_GridMax;
-	m_GridSize -= m_GridMin;
-	m_GridRes.x = ceil ( m_GridSize.x / world_cellsize );		// Determine grid resolution
+	m_GridSize -= m_GridMin;    // M: Grid Size (x, y, z) | refers to the length of each coordinates in a real world
+	m_GridRes.x = ceil ( m_GridSize.x / world_cellsize );   // Determine grid resolution
 	m_GridRes.y = ceil ( m_GridSize.y / world_cellsize );
-	m_GridRes.z = ceil ( m_GridSize.z / world_cellsize );
-	m_GridSize.x = m_GridRes.x * cell_size / sim_scale;				// Adjust grid size to multiple of cell size
+	m_GridRes.z = ceil ( m_GridSize.z / world_cellsize );   // M: Grid Resolution (x, y, z) | refers to # of cells within each coordinates in the simulation
+	m_GridSize.x = m_GridRes.x * cell_size / sim_scale; // Adjust grid size to multiple of cell size
 	m_GridSize.y = m_GridRes.y * cell_size / sim_scale;
-	m_GridSize.z = m_GridRes.z * cell_size / sim_scale;
-	m_GridDelta = m_GridRes;		// delta = translate from world space to cell #
+	m_GridSize.z = m_GridRes.z * cell_size / sim_scale; // M: Grid Size (x, y, z) | 
+    // M: Since then, the grid size(real world) has been multiple of cell size(real world)
+	m_GridDelta = m_GridRes;    // delta = translate from world space to cell #
 	m_GridDelta /= m_GridSize;
 	
 	m_GridTotal = (int)(m_GridRes.x * m_GridRes.y * m_GridRes.z);
