@@ -1,4 +1,4 @@
-/*
+﻿/*
   FLUIDS v.3 - SPH Fluid Simulator for CPU and GPU
   Copyright (C) 2012-2013. Rama Hoetzlein, http://fluids3.com
 
@@ -17,13 +17,13 @@
   2. Altered source versions must be plainly marked as such, and must not be
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
-  4. Any published work based on this code must include public acknowledgement
+  4. Any published work based on this code must include public acknowledgment
      of the origin. This includes following when applicable:
 	   - Journal/Paper publications. Credited by reference to work in text & citation.
 	   - Public presentations. Credited in at least one slide.
 	   - Distributed Games/Apps. Credited as single line in game or app credit page.	 
 	 Retaining this additional license term is required in derivative works.
-	 Acknowledgement may be provided as:
+	 Acknowledgment may be provided as:
 	   Publication version:  
 	      2012-2013, Hoetzlein, Rama C. Fluids v.3 - A Large-Scale, Open Source
 	 	  Fluid Simulator. Published online at: http://fluids3.com
@@ -32,12 +32,14 @@
 
  Notes on Clause 4:
   The intent of this clause is public attribution for this contribution, not code use restriction. 
-  Both commerical and open source projects may redistribute and reuse without code release.
+  Both commercial and open source projects may redistribute and reuse without code release.
   However, clause #1 of ZLib indicates that "you must not claim that you wrote the original software". 
-  Clause #4 makes this more specific by requiring public acknowledgement to be extended to 
+  Clause #4 makes this more specific by requiring public acknowledgment to be extended to 
   derivative licenses. 
 
 */
+
+
 
 #include <time.h>
 #include <math.h>
@@ -79,12 +81,12 @@ int		psys_freq = 1;
 int		psys_playback;
 
 bool	bHelp = true;					// Toggles
-int		iShade = 0;						// Shading mode (default = no shadows)
-int		iClrMode = 0;
-bool    bPause = false;
+int		iShade = 0;						// Shading mode (default = no shadows) default 0
+int		iClrMode = 0;                   // default 0
+bool    bPause = false;                 // default false
 
-// View matricies
-float model_matrix[16];					// Model matrix (M)
+// View matrices
+float model_matrix[16];					// Model matrix (M) default 16
 
 // Mouse control
 #define DRAG_OFF		0				// mouse states

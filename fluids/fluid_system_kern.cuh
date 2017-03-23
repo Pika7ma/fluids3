@@ -109,8 +109,8 @@
 	};
 
 	// Prefix Sum defines - 16 banks on G80
-	#define NUM_BANKS		16
-	#define LOG_NUM_BANKS	 4
+	#define NUM_BANKS		16 // M: Default 16
+	#define LOG_NUM_BANKS	 4 // M: Default 4
 
 
 	#ifndef CUDA_KERNEL		

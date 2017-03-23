@@ -1,4 +1,4 @@
-/*
+﻿/*
   FLUIDS v.3 - SPH Fluid Simulator for CPU and GPU
   Copyright (C) 2012-2013. Rama Hoetzlein, http://fluids3.com
 
@@ -39,6 +39,9 @@
 
 */
 
+// for syntax highlight
+#include "device_launch_parameters.h"
+
 #define CUDA_KERNEL
 #include "fluid_system_kern.cuh"
 
@@ -51,7 +54,7 @@ __constant__ uint				gridActive;
 
 __global__ void insertParticles ( bufList buf, int pnum )
 {
-	uint i = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;	// particle index				
+	uint i = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;	// particle index
 	if ( i >= pnum ) return;
 
 	register float3 gridMin = simData.gridMin;
@@ -80,7 +83,7 @@ __global__ void insertParticles ( bufList buf, int pnum )
 }
 
 // the mutex variable
-__device__ int g_mutex = 0;
+__device__ int g_mutex = 0; // M: Default 0
 
 // GPU simple synchronization function
 __device__ void __gpu_sync(int goalVal)
