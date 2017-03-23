@@ -604,9 +604,9 @@ void FluidSystem::RunSimulateCUDACluster ()
 	CountingSortFullCUDA ( 0x0 );
 	record ( PTIME_SORT, "Sort CUDA", start );			
 	start.SetSystemTime ();
-	CountActiveCUDA ();
-	record ( PTIME_COUNT, "Count CUDA", start );			
-	start.SetSystemTime ();
+	//CountActiveCUDA ();							//T: useless
+	//record ( PTIME_COUNT, "Count CUDA", start );			
+	//start.SetSystemTime ();
 	ComputePressureGroupCUDA();
 	record ( PTIME_PRESS, "Press CUDA (Cluster)", start );
 	start.SetSystemTime ();

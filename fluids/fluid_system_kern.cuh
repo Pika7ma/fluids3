@@ -121,13 +121,13 @@
 		__global__ void insertParticles ( bufList buf, int pnum );
 		__global__ void countingSortIndex ( bufList buf, int pnum );		
 		__global__ void countingSortFull ( bufList buf, int pnum );		
-		__global__ void computeQuery ( bufList buf, int pnum );	
+		//__global__ void computeQuery ( bufList buf, int pnum );				//T: useless
 		__global__ void computePressure ( bufList buf, int pnum );		
 		__global__ void computeForce ( bufList buf, int pnum );
 		__global__ void computePressureGroup ( bufList buf, int pnum );
 		__global__ void advanceParticles ( float time, float dt, float ss, bufList buf, int numPnts );
 
-		__global__ void countActiveCells ( bufList buf, int pnum );		
+		//__global__ void countActiveCells ( bufList buf, int pnum );			//T: useless
 
 		void updateSimParams ( FluidParams* cpufp );
 

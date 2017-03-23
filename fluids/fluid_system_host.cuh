@@ -85,10 +85,10 @@
 	void CountingSortIndexCUDA ( uint* ggrid );	
 	void CountingSortFullCUDA ( uint* ggrid );
 	void ComputePressureCUDA ();
-	void ComputeQueryCUDA ();
+	//void ComputeQueryCUDA ();						//T: useless
 	void ComputeForceCUDA ();	
 	
-	void CountActiveCUDA ();						// Clustering method (shared mem)
+	//void CountActiveCUDA ();						// Clustering method (shared mem)		//T: useless
 	void ComputePressureGroupCUDA ();				// Clustering method (shared mem)
 
 	void AdvanceCUDA ( float time, float dt, float ss );
