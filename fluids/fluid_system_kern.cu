@@ -1,4 +1,4 @@
-﻿/*
+/*
   FLUIDS v.3 - SPH Fluid Simulator for CPU and GPU
   Copyright (C) 2012-2013. Rama Hoetzlein, http://fluids3.com
 
@@ -67,26 +67,30 @@ __global__ void insertParticles ( bufList buf, int pnum )
 	register float3		gcf;
 	register int3		gc;
 
-	gcf = (buf.mpos[i] - gridMin) * gridDelta; 
+	gcf = (buf.mpos[i] - gridMin) * gridDelta;  // M: the relative position in simulation
 	gc = make_int3( int(gcf.x), int(gcf.y), int(gcf.z) );
-	gs = (gc.y * gridRes.z + gc.z)*gridRes.x + gc.x;
-	if ( gc.x >= 1 && gc.x <= gridScan.x && gc.y >= 1 && gc.y <= gridScan.y && gc.z >= 1 && gc.z <= gridScan.z ) {
-		buf.mgcell[i] = gs;											// Grid cell insert.
-		buf.mgndx[i] = atomicAdd ( &buf.mgridcnt[ gs ], 1 );		// Grid counts.
+	gs = (gc.y * gridRes.z + gc.z)*gridRes.x + gc.x;    // M: turn 3D to 1D
+	if ( gc.x >= 1 && gc.x <= gridScan.x && gc.y >= 1 && gc.y <= gridScan.y && gc.z >= 1 && gc.z <= gridScan.z ) {  // M: for all the particles in the simulation domain
+		buf.mgcell[i] = gs;											// Grid cell insert. M: insert the grid cell index into the property of this particle
+		buf.mgndx[i] = atomicAdd ( &buf.mgridcnt[ gs ], 1 );		// Grid counts. M: 1. record the number of particles in this grid cell 2. record the rank of the particle in the cell
 
-		gcf = (-make_float3(poff,poff,poff) + buf.mpos[i] - gridMin) * gridDelta;
-		gc = make_int3( int(gcf.x), int(gcf.y), int(gcf.z) );
-		gs = ( gc.y * gridRes.z + gc.z)*gridRes.x + gc.x;		
+        // M: useless code
+		//gcf = (-make_float3(poff,poff,poff) + buf.mpos[i] - gridMin) * gridDelta;
+		//gc = make_int3( int(gcf.x), int(gcf.y), int(gcf.z) );
+		//gs = ( gc.y * gridRes.z + gc.z)*gridRes.x + gc.x;		
+
 	} else {
-		buf.mgcell[i] = GRID_UNDEF;		
+		buf.mgcell[i] = GRID_UNDEF;		// M: assert the particle "grid undifined" which are out of the domain
 	}
 }
 
+// it seems that this part did not work
+
 // the mutex variable
-__device__ int g_mutex = 0; // M: Default 0
+//__device__ int g_mutex = 0; // M: default 0, seems it doesn't matter a lot
 
 // GPU simple synchronization function
-__device__ void __gpu_sync(int goalVal)
+/*__device__ void __gpu_sync(int goalVal)
 {
 
 	__threadfence ();
@@ -103,7 +107,7 @@ __device__ void __gpu_sync(int goalVal)
 	if ( blockIdx.x == 0 && threadIdx.x == 0 ) g_mutex = 0;
 	
 	__syncthreads();
-}
+}*/
 
 // countingSortInPlace -- GPU_SYNC DOES NOT WORK
 /*uint i = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;		// particle index				
@@ -145,8 +149,9 @@ __global__ void countingSortIndex ( bufList buf, int pnum )
 	uint i = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;		// particle index				
 	if ( i >= pnum ) return;
 
-	uint icell = buf.mgcell[i];
-	uint indx =  buf.mgndx[i];
+	uint icell = buf.mgcell[i]; // M: figure out which grid cell the particle exactly in
+	uint indx =  buf.mgndx[i];  // M: figure out which the particle is in its cell
+    // M: 
 	int sort_ndx = buf.mgridoff[ icell ] + indx;				// global_ndx = grid_cell_offet + particle_offset
 	if ( icell != GRID_UNDEF ) {
 		buf.mgrid[ sort_ndx ] = i;					// index sort, grid refers to original particle order
@@ -417,7 +422,7 @@ __device__ float3 contributeForce ( int i, float3 ipos, float3 iveleval, float i
 		dsq = (dist.x*dist.x + dist.y*dist.y + dist.z*dist.z);
 		if ( dsq < simData.rd2 && dsq > 0) {			
 			dsq = sqrt(dsq * simData.d2);
-			c = ( simData.psmoothradius - dsq ); 
+			c = ( simData.psmoothradius - dsq ); // M: c:= (h - r)
 			pterm = simData.psimscale * -0.5f * c * simData.spikykern * ( ipress + buf.mpress[ j ] ) / dsq;			
 			force += ( pterm * dist + simData.vterm * ( buf.mveleval[ j ] - iveleval )) * c * idens * (buf.mdensity[ j ] );
 		}	

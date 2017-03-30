@@ -1,1 +1,4 @@
 # git ignore file
+/fluids_v3.VC.db
+/vc100.pdb
+/.vs/*

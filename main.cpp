@@ -1,4 +1,4 @@
-﻿/*
+/*
   FLUIDS v.3 - SPH Fluid Simulator for CPU and GPU
   Copyright (C) 2012-2013. Rama Hoetzlein, http://fluids3.com
 

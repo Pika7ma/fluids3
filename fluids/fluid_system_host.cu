@@ -1,4 +1,4 @@
-﻿/*
+/*
   FLUIDS v.3 - SPH Fluid Simulator for CPU and GPU
   Copyright (C) 2012-2013. Rama Hoetzlein, http://fluids3.com
 
@@ -143,7 +143,7 @@ void cudaInit()
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.msortbuf, sizeof(uint) ),		"Malloc msortbu" );	
 
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgrid, 1 ),						"Malloc mgrid"  );
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridcnt, 1 ),					"Malloc mgridcnt"  );
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridcnt, 1 ),					"Malloc mgridcnt"  );   
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridoff, 1 ),					"Malloc mgridoff" );	
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridactive, 1 ),				"Malloc mgridactive");
 
@@ -154,7 +154,7 @@ void cudaInit()
 	
 // Compute number of blocks to create
 int iDivUp (int a, int b) {
-    return (a % b != 0) ? (a / b + 1) : (a / b); // 向上取整
+    return (a % b != 0) ? (a / b + 1) : (a / b); // M: Rounding up
 }
 void computeNumBlocks (int numPnts, int maxThreads, int &numBlocks, int &numThreads)
 {

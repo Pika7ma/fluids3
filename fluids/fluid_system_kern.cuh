@@ -56,8 +56,8 @@
 		float3*			mforce;
 		float*			mpress;
 		float*			mdensity;		
-		uint*			mgcell;
-		uint*			mgndx;
+		uint*			mgcell; // M: particle's property, indicates which grid cell the particle is in
+		uint*			mgndx;  // M: particle's property, indicates the rank of this particle in its cell (i.g. help find the particle from the cell)
 		uint*			mclr;			// 4 byte color
 
 		uint*			mcluster;
@@ -65,7 +65,7 @@
 		char*			msortbuf;
 
 		uint*			mgrid;	
-		int*			mgridcnt;
+		int*			mgridcnt;   // M: grid's property, indicates the number of particles in this grid cell
 		int*			mgridoff;
 		int*			mgridactive;
 	};
