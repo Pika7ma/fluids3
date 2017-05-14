@@ -2,3 +2,7 @@
 /fluids_v3.VC.db
 /vc100.pdb
 /.vs/*
+/output/*
+/fluids_v3.exe
+/fluids_v3.exp
+/fluids_v3.lib

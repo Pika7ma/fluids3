@@ -218,11 +218,12 @@ __global__ void countingSortFull ( bufList buf, int pnum )
 	__syncthreads();
 }*/
 
-
 __device__ float contributePressure ( int i, float3 p, int cell, bufList buf )
 {			
 	float3 dist;
-	float dsq, c, sum;
+    float dsq;
+    float c;
+    float sum;
 	register float d2 = simData.psimscale * simData.psimscale;
 	register float r2 = simData.r2 / d2;
 	
@@ -238,8 +239,8 @@ __device__ float contributePressure ( int i, float3 p, int cell, bufList buf )
 		dsq = (dist.x*dist.x + dist.y*dist.y + dist.z*dist.z);
 		if ( dsq < r2 ) {
 			c = (r2 - dsq)*d2;
-			sum += c * c * c;				
-		} 
+			sum += c * c * c;
+		}
 	}
 	
 	return sum;
