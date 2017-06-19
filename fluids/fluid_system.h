@@ -66,7 +66,7 @@
 	#define RUN_CUDA_CLUSTER	8
 	#define RUN_PLAYBACK		9
 
-	// Scalar params
+	// Scalar params (Prefix "P" for coarse system, "SF" for surface particles)
 	#define PMODE				0
 	#define PNUM				1
 	#define PEXAMPLE			2
@@ -115,7 +115,9 @@
 	#define PTIME_TOGPU			45
 	#define PTIME_FROMGPU		46
 	#define PFORCE_FREQ			47
-	
+    #define SFNUM               48  // M: the param for # of surface particles
+    #define SFSTAT_PMEM         49  // M: the param for the start point of surface paritcles
+ 	
 
 	// Vector params
 	#define PVOLMIN				0
@@ -186,6 +188,9 @@
 		void AddEmit ( float spacing );
 		int NumPoints ()		{ return mNumPoints; }
 		
+        // M: Surface Particle Utilities
+        void AllocateSurfaceParticles(int cnt);
+
 		// Setup
 		void Setup ( bool bStart );
 		void SetupRender ();
@@ -332,6 +337,24 @@
 		uint*					mGridNext;
 		uint*					mNbrNdx;
 		uint*					mNbrCnt;
+
+        // M: Surface Particle Buffers
+        int						sfNumPoints;
+        int						sfMaxPoints;
+        int						sfGoodPoints;
+        Vector3DF*				sfPos;
+        DWORD*					sfClr;
+        Vector3DF*				sfVel;
+        Vector3DF*				sfVelEval;
+        unsigned short*			sfAge;
+        float*					sfPressure;
+        float*					sfDensity;
+        Vector3DF*				sfForce;
+        uint*					sfGridCell;
+        uint*					sfClusterCell;
+        uint*					sfGridNext;
+        uint*					sfNbrNdx;
+        uint*					sfNbrCnt;
 		
 		// Acceleration Grid
 		uint*					m_Grid;

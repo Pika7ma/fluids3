@@ -1,15 +1,328 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppBuild.targets(298,5): warning MSB8004: Intermediate Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Intermediate Directory.
+  Compiling CUDA source file fluids\fluid_system_host.cu...
   Compiling CUDA source file fluids\fluid_system_kern.cu...
   
   D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2010 -ccbin "D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -Ifluids -Icommon -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include"     --keep-dir Release -maxrregcount=0  --machine 32 --compile -cudart static     -DWIN32 -DNDEBUG -D_WINDOWS -DBUILD_CUDA -D_UNICODE -DUNICODE -Xcompiler "/EHsc /W3 /nologo /O2  /Zi  /MD " -o "D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\\output\Release\fluid_system_kern.cu.obj" "D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\fluids\fluid_system_kern.cu" 
-D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_kern.cu(64): warning : variable "poff" was declared but never referenced
-D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_kern.cu(606): warning : variable "status" was set but never used
-D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_kern.cu(64): warning : variable "poff" was declared but never referenced
-D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_kern.cu(606): warning : variable "status" was set but never used
+  
+  D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\bin\nvcc.exe" -gencode=arch=compute_20,code=\"sm_20,compute_20\" --use-local-env --cl-version 2010 -ccbin "D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin"  -Ifluids -Icommon -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include"     --keep-dir Release -maxrregcount=0  --machine 32 --compile -cudart static     -DWIN32 -DNDEBUG -D_WINDOWS -DBUILD_CUDA -D_UNICODE -DUNICODE -Xcompiler "/EHsc /W3 /nologo /O2  /Zi  /MD " -o "D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\\output\Release\fluid_system_host.cu.obj" "D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\fluids\fluid_system_host.cu" 
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_kern.cu(63): warning : variable "poff" was declared but never referenced
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_kern.cu(597): warning : variable "status" was set but never used
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_kern.cu(63): warning : variable "poff" was declared but never referenced
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_kern.cu(597): warning : variable "status" was set but never used
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_host.cu(82): warning : variable "argc" was declared but never referenced
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_host.cu(83): warning : variable "argv" was declared but never referenced
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_host.cu(91): warning : variable "argc" was declared but never referenced
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_host.cu(92): warning : variable "argv" was declared but never referenced
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_host.cu(82): warning : variable "argc" was declared but never referenced
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_host.cu(83): warning : variable "argv" was declared but never referenced
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_host.cu(91): warning : variable "argc" was declared but never referenced
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_host.cu(92): warning : variable "argv" was declared but never referenced
 CUDACOMPILE : nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
 CUDACOMPILE : nvcc warning : nvcc support for Microsoft Visual Studio 2010 and earlier has been deprecated and is no longer being maintained
   fluid_system_kern.cu
+CUDACOMPILE : nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+CUDACOMPILE : nvcc warning : nvcc support for Microsoft Visual Studio 2010 and earlier has been deprecated and is no longer being maintained
+  fluid_system_host.cu
   support for Microsoft Visual Studio 2010 has been deprecated!
+  support for Microsoft Visual Studio 2010 has been deprecated!
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_host.cu(286): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_host.cu(287): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+D:/Pika Ma/Documents/Visual Studio 2015/Projects/fluids3/fluids/fluid_system_host.cu(288): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+  fluid_system.cpp
+d:\pika ma\documents\visual studio 2015\projects\fluids3\fluids\fluid_system.h(285): warning C4244: 'return' : conversion from 'double' to 'int', possible loss of data
+d:\pika ma\documents\visual studio 2015\projects\fluids3\fluids\fluid_system.h(293): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
+d:\pika ma\documents\visual studio 2015\projects\fluids3\fluids\fluid_system.h(298): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
+d:\pika ma\documents\visual studio 2015\projects\fluids3\fluids\fluid_system_host.cuh(52): warning C4005: 'COLOR' : macro redefinition
+          d:\pika ma\documents\visual studio 2015\projects\fluids3\common\app_util.h(87) : see previous definition of 'COLOR'
+d:\pika ma\documents\visual studio 2015\projects\fluids3\fluids\fluid_system_host.cuh(53): warning C4005: 'COLORA' : macro redefinition
+          d:\pika ma\documents\visual studio 2015\projects\fluids3\common\app_util.h(88) : see previous definition of 'COLORA'
+fluids\fluid_system.cpp(133): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+fluids\fluid_system.cpp(135): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+fluids\fluid_system.cpp(143): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+fluids\fluid_system.cpp(143): warning C4305: 'argument' : truncation from 'double' to 'float'
+fluids\fluid_system.cpp(143): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(145): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(145): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(158): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(171): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(180): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(354): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+fluids\fluid_system.cpp(355): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+fluids\fluid_system.cpp(352): warning C4101: 'y' : unreferenced local variable
+fluids\fluid_system.cpp(357): warning C4101: 'xp' : unreferenced local variable
+fluids\fluid_system.cpp(351): warning C4101: 'n' : unreferenced local variable
+fluids\fluid_system.cpp(358): warning C4101: 'odd' : unreferenced local variable
+fluids\fluid_system.cpp(357): warning C4101: 'zp' : unreferenced local variable
+fluids\fluid_system.cpp(357): warning C4101: 'yp' : unreferenced local variable
+fluids\fluid_system.cpp(353): warning C4101: 'cnty' : unreferenced local variable
+fluids\fluid_system.cpp(411): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(415): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(416): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(417): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(418): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(419): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(618): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(618): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(618): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(656): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(656): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(656): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(683): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(683): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(683): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(692): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(849): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(850): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(852): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(853): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(854): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(857): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(879): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(881): warning C4244: 'argument' : conversion from 'double' to 'const float', possible loss of data
+fluids\fluid_system.cpp(881): warning C4244: 'argument' : conversion from 'double' to 'const float', possible loss of data
+fluids\fluid_system.cpp(883): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(883): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(883): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(889): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(889): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(889): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(894): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(899): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(899): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(899): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(902): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(906): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(906): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(906): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(915): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(915): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(915): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(921): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(921): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(921): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(931): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(931): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(931): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(941): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(941): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(941): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(950): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(950): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(950): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1012): warning C4305: '=' : truncation from 'double' to 'float'
+fluids\fluid_system.cpp(1013): warning C4305: '=' : truncation from 'double' to 'float'
+fluids\fluid_system.cpp(1109): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+fluids\fluid_system.cpp(1110): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+fluids\fluid_system.cpp(1111): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+fluids\fluid_system.cpp(1134): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+fluids\fluid_system.cpp(1203): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1205): warning C4244: 'initializing' : conversion from 'double' to 'int', possible loss of data
+fluids\fluid_system.cpp(1185): warning C4101: 'gz' : unreferenced local variable
+fluids\fluid_system.cpp(1185): warning C4101: 'gy' : unreferenced local variable
+fluids\fluid_system.cpp(1185): warning C4101: 'gx' : unreferenced local variable
+fluids\fluid_system.cpp(1306): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1337): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1341): warning C4101: 'jpos' : unreferenced local variable
+fluids\fluid_system.cpp(1372): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1374): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1402): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1415): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1416): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1384): warning C4101: 'jnext' : unreferenced local variable
+fluids\fluid_system.cpp(1371): warning C4101: 'dy' : unreferenced local variable
+fluids\fluid_system.cpp(1371): warning C4101: 'dz' : unreferenced local variable
+fluids\fluid_system.cpp(1371): warning C4101: 'dx' : unreferenced local variable
+fluids\fluid_system.cpp(1370): warning C4101: 'nbr' : unreferenced local variable
+fluids\fluid_system.cpp(1440): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1441): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1442): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1485): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1487): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1438): warning C4101: 'mR2' : unreferenced local variable
+fluids\fluid_system.cpp(1450): warning C4101: 'jndx' : unreferenced local variable
+fluids\fluid_system.cpp(1435): warning C4101: 'nbr' : unreferenced local variable
+fluids\fluid_system.cpp(1515): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1516): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1517): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1539): warning C4018: '<' : signed/unsigned mismatch
+fluids\fluid_system.cpp(1550): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1552): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1513): warning C4101: 'mR2' : unreferenced local variable
+fluids\fluid_system.cpp(1510): warning C4101: 'nbr' : unreferenced local variable
+fluids\fluid_system.cpp(1586): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1587): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1598): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1599): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1600): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1601): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1602): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1603): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1669): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+fluids\fluid_system.cpp(1669): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+fluids\fluid_system.cpp(1675): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+fluids\fluid_system.cpp(1675): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+fluids\fluid_system.cpp(1681): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+fluids\fluid_system.cpp(1681): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+fluids\fluid_system.cpp(1695): warning C4244: 'argument' : conversion from 'int' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1719): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1719): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1719): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1719): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1739): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1740): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(1760): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1760): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1760): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1760): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1780): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+fluids\fluid_system.cpp(1780): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+fluids\fluid_system.cpp(1780): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+fluids\fluid_system.cpp(1780): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+fluids\fluid_system.cpp(1806): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+fluids\fluid_system.cpp(1852): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+fluids\fluid_system.cpp(1883): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1883): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1883): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1883): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+fluids\fluid_system.cpp(1770): warning C4101: 'dat' : unreferenced local variable
+fluids\fluid_system.cpp(2071): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(2183): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(2184): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+fluids\fluid_system.cpp(2230): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+fluids\fluid_system.cpp(2320): warning C4305: 'argument' : truncation from 'double' to 'const float'
+fluids\fluid_system.cpp(2373): warning C4244: 'return' : conversion from 'double' to 'int', possible loss of data
+fluids\fluid_system.cpp(2385): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+fluids\fluid_system.cpp(2387): warning C4244: 'argument' : conversion from 'double' to 'const float', possible loss of data
+fluids\fluid_system.cpp(2387): warning C4244: 'argument' : conversion from 'double' to 'const float', possible loss of data
+fluids\fluid_system.cpp(2387): warning C4244: 'argument' : conversion from 'double' to 'const float', possible loss of data
+fluids\fluid_system.cpp(2389): warning C4244: 'argument' : conversion from 'double' to 'const float', possible loss of data
+fluids\fluid_system.cpp(2389): warning C4244: 'argument' : conversion from 'double' to 'const float', possible loss of data
+fluids\fluid_system.cpp(2389): warning C4244: 'argument' : conversion from 'double' to 'const float', possible loss of data
+  main.cpp
+D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\common\app_opengl.h(113): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+          D:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\stdio.h(253) : see declaration of 'fscanf'
+D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\common\app_opengl.h(120): warning C4101: 'errString' : unreferenced local variable
+D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\common\app_opengl.h(358): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\common\app_opengl.h(358): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+d:\pika ma\documents\visual studio 2015\projects\fluids3\common\app_util.h(87): warning C4005: 'COLOR' : macro redefinition
+          D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\fluids\fluid_system_host.cuh(52) : see previous definition of 'COLOR'
+d:\pika ma\documents\visual studio 2015\projects\fluids3\common\app_util.h(88): warning C4005: 'COLORA' : macro redefinition
+          D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\fluids\fluid_system_host.cuh(53) : see previous definition of 'COLORA'
+D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\fluids\fluid_system.h(285): warning C4244: 'return' : conversion from 'double' to 'int', possible loss of data
+D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\fluids\fluid_system.h(293): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
+D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\fluids\fluid_system.h(298): warning C4244: 'return' : conversion from 'double' to 'float', possible loss of data
+main.cpp(66): warning C4305: 'initializing' : truncation from 'double' to 'float'
+main.cpp(67): warning C4305: 'initializing' : truncation from 'double' to 'float'
+main.cpp(145): warning C4305: 'argument' : truncation from 'double' to 'const float'
+main.cpp(145): warning C4305: 'argument' : truncation from 'double' to 'const float'
+main.cpp(145): warning C4305: 'argument' : truncation from 'double' to 'const float'
+main.cpp(145): warning C4305: 'argument' : truncation from 'double' to 'const float'
+main.cpp(145): warning C4305: 'argument' : truncation from 'double' to 'const float'
+main.cpp(145): warning C4305: 'argument' : truncation from 'double' to 'const float'
+main.cpp(157): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+main.cpp(168): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+main.cpp(168): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+main.cpp(168): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+main.cpp(172): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+main.cpp(173): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+main.cpp(174): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+main.cpp(175): warning C4305: 'argument' : truncation from 'double' to 'GLfloat'
+main.cpp(181): warning C4305: 'argument' : truncation from 'double' to 'float'
+main.cpp(185): warning C4305: 'argument' : truncation from 'double' to 'float'
+main.cpp(199): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+main.cpp(199): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+main.cpp(200): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+main.cpp(203): warning C4101: 'view_matrix' : unreferenced local variable
+main.cpp(256): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+main.cpp(263): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+main.cpp(269): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+main.cpp(269): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+main.cpp(280): warning C4305: 'argument' : truncation from 'double' to 'GLclampf'
+main.cpp(280): warning C4305: 'argument' : truncation from 'double' to 'GLclampf'
+main.cpp(280): warning C4305: 'argument' : truncation from 'double' to 'GLclampf'
+main.cpp(324): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+main.cpp(324): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+main.cpp(353): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+main.cpp(358): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+main.cpp(364): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+main.cpp(364): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+main.cpp(369): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+main.cpp(369): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+main.cpp(374): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+main.cpp(374): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+main.cpp(379): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+main.cpp(379): warning C4244: 'argument' : conversion from 'int' to 'const float', possible loss of data
+main.cpp(406): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+main.cpp(427): warning C4305: 'argument' : truncation from 'double' to 'float'
+main.cpp(431): warning C4305: 'argument' : truncation from 'double' to 'float'
+main.cpp(464): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+main.cpp(464): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+main.cpp(488): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+main.cpp(488): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+main.cpp(493): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+main.cpp(493): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+main.cpp(495): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+main.cpp(500): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+main.cpp(500): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+main.cpp(502): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
+main.cpp(507): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
+main.cpp(508): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+main.cpp(513): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
+main.cpp(520): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
+main.cpp(521): warning C4244: '+=' : conversion from 'double' to 'float', possible loss of data
+main.cpp(524): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
+main.cpp(532): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
+main.cpp(533): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
+main.cpp(536): warning C4244: '-=' : conversion from 'double' to 'float', possible loss of data
+main.cpp(557): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+main.cpp(559): warning C4305: 'argument' : truncation from 'double' to 'GLclampf'
+main.cpp(559): warning C4305: 'argument' : truncation from 'double' to 'GLclampf'
+main.cpp(559): warning C4305: 'argument' : truncation from 'double' to 'GLclampf'
+main.cpp(586): warning C4305: '=' : truncation from 'double' to 'float'
+main.cpp(598): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+main.cpp(623): warning C4305: 'argument' : truncation from 'double' to 'float'
      Creating library D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\fluids_v3.lib and object D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3\fluids_v3.exp
   Generating code
   Finished generating code

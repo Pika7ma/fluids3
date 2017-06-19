@@ -75,15 +75,16 @@ Vector3DF	obj_from, obj_angs, obj_dang;
 Vector4DF	light[2], light_to[2];				// Light stuff
 float		light_fov;	
 
-int		psys_count = 16384;
-int		psys_rate = 0;							// Particle stuff
-int		psys_freq = 1;
+int		psys_count      = 16384;
+int     psys_count_sf   = 16384;                // M: # of Surface particles
+int		psys_rate       = 0;					// Particle stuff
+int		psys_freq       = 1;
 int		psys_playback;
 
-bool	bHelp = true;					// Toggles
-int		iShade = 0;						// Shading mode (default = no shadows) default 0
-int		iClrMode = 0;                   // default 0
-bool    bPause = false;                 // default false
+bool	bHelp       = true;					    // Toggles
+int		iShade      = 0;						// Shading mode (default = no shadows) default 0
+int		iClrMode    = 0;                        // default 0
+bool    bPause      = false;                    // default false
 
 // View matrices
 float model_matrix[16];					// Model matrix (M) default 16
@@ -250,14 +251,18 @@ void display ()
 {
 	PERF_PUSH ( "FRAME" );	
 
-	// Check for slider interaction
-	if ( guiChanged(2) ) {	
-		psys.SetParam ( PNUM, psys_count, 4, 40000000 );
-		psys.Setup ( false );
-	}
-	if ( guiChanged(3) ) 	psys.SetVec ( PPLANE_GRAV_DIR, Vector3DF(0,-gravity,0) );
-	if ( guiChanged(4) ) 	psys.SetParam ( PVISC, visc );
-	if ( guiChanged(5) ) 	psys.SetParam ( PRESTDENSITY, restdens );
+    // Check for slider interaction
+    if (guiChanged(2)) {
+        psys.SetParam(PNUM, psys_count, 4, 40000000);
+        psys.Setup(false);
+    }
+    if (guiChanged(3)) 	psys.SetVec(PPLANE_GRAV_DIR, Vector3DF(0, -gravity, 0));
+    if (guiChanged(4)) 	psys.SetParam(PVISC, visc);
+    if (guiChanged(5)) 	psys.SetParam(PRESTDENSITY, restdens);
+    if (guiChanged(6)) {
+        psys.SetParam(SFNUM, psys_count_sf, 4, 40000000);
+        psys.Setup(false);
+    }
 	
 
 	// Do simulation!
@@ -604,12 +609,13 @@ void initialize ()
 	PERF_INIT ( true );
 	PERF_SET ( true, 0, true, "" );
 		
-	addGui (  20,   20, 200, 12, "Frame Time - FPS ",	GUI_PRINT,  GUI_INT,	&frameFPS, 0, 0 );					
-	addGui (  20,   35, 200, 12, "Frame Time - msec ",	GUI_PRINT,  GUI_FLOAT,	&frameTime, 0, 0 );							
-	addGui (  20,   50, 200, 27, "# of Particles",		GUI_SLIDER, GUI_INTLOG,	&psys_count, 1024, 8000000 );
-	addGui (  20,   80, 200, 27, "Gravity",				GUI_SLIDER, GUI_FLOAT,	&gravity, 0, 20.0 );
-	addGui (  20,  110, 200, 27, "Viscosity",			GUI_SLIDER, GUI_FLOAT,	&visc, 0, 1 );
-	addGui (  20,  140, 200, 27, "Rest Density",			GUI_SLIDER, GUI_FLOAT,	&restdens, 0, 1000.0 );
+	addGui (  20,   20, 200, 12, "Frame Time - FPS ",	    GUI_PRINT,  GUI_INT,	&frameFPS,      0,      0 );					
+	addGui (  20,   35, 200, 12, "Frame Time - msec ",	    GUI_PRINT,  GUI_FLOAT,	&frameTime,     0,      0 );							
+	addGui (  20,   50, 200, 27, "# of Particles",		    GUI_SLIDER, GUI_INTLOG,	&psys_count,    1024,   8000000 );
+	addGui (  20,   80, 200, 27, "Gravity",				    GUI_SLIDER, GUI_FLOAT,	&gravity,       0,      20.0 );
+	addGui (  20,  110, 200, 27, "Viscosity",			    GUI_SLIDER, GUI_FLOAT,	&visc,          0,      1 );
+	addGui (  20,  140, 200, 27, "Rest Density",			GUI_SLIDER, GUI_FLOAT,	&restdens,      0,      1000.0 );
+    addGui (  20,  170, 200, 27, "# of Surface Particles",  GUI_SLIDER, GUI_INTLOG, &psys_count_sf, 1024,   8000000);
 		
 	init2D ( "arial_12" );		// specify font file (.bin/tga)
 	setText ( 1.0, -0.5 );		// scale by 0.5, kerning adjust -0.5 pixels

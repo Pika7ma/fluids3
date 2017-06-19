@@ -92,10 +92,11 @@ FluidSystem::FluidSystem ()
 	m_NeighborTable = 0x0;
 	m_NeighborDist = 0x0;
 	
-	m_Param [ PMODE ]		= RUN_CUDA_FULL;
-	m_Param [ PEXAMPLE ]	= 1;
-	m_Param [ PGRID_DENSITY ] = 2.0;
-	m_Param [ PNUM ]		= 65536 * 128;
+	m_Param [ PMODE ]		    = RUN_CUDA_FULL;
+	m_Param [ PEXAMPLE ]	    = 1;
+	m_Param [ PGRID_DENSITY ]   = 2.0;
+	m_Param [ PNUM ]		    = 65536 * 128;
+    m_Param [ SFNUM ]           = 65536 * 128;
 
 
 	m_Toggle [ PDEBUG ]		=	false;
@@ -110,51 +111,55 @@ FluidSystem::FluidSystem ()
 
 }
 
-void FluidSystem::Setup ( bool bStart )
+void FluidSystem::Setup(bool bStart)
 {
-	#ifdef TEST_PREFIXSUM
-		TestPrefixSum ( 16*1024*1024 );		
-		exit(-2);
-	#endif
+    #ifdef TEST_PREFIXSUM
+        TestPrefixSum(16 * 1024 * 1024);
+        exit(-2);
+    #endif
 
-	m_Frame = 0;
-	m_Time = 0;
+    m_Frame = 0;
+    m_Time = 0;
 
-	ClearNeighborTable ();
-	mNumPoints = 0;
-	
-	SetupDefaultParams ();
-	
-	SetupExampleParams ( bStart );
+    ClearNeighborTable();
+    mNumPoints = 0;
 
-	m_Param [PGRIDSIZE] = 2*m_Param[PSMOOTHRADIUS] / m_Param[PGRID_DENSITY];
+    SetupDefaultParams();
 
-	AllocateParticles ( m_Param[PNUM] );
-	AllocatePackBuf ();
-	
-	SetupKernels ();
-	
-	SetupSpacing ();
+    SetupExampleParams(bStart);
 
-	SetupAddVolume ( m_Vec[PINITMIN], m_Vec[PINITMAX], m_Param[PSPACING], 0.1, m_Param[PNUM] );													// Create the particles
+    m_Param[PGRIDSIZE] = 2 * m_Param[PSMOOTHRADIUS] / m_Param[PGRID_DENSITY];
 
-	SetupGridAllocate ( m_Vec[PVOLMIN], m_Vec[PVOLMAX], m_Param[PSIMSCALE], m_Param[PGRIDSIZE], 1.0 );	// Setup grid
+    AllocateParticles(m_Param[PNUM]);
 
-	#ifdef BUILD_CUDA
+    AllocateSurfaceParticles(m_Param[SFNUM]);
 
-		FluidClearCUDA ();
+    AllocatePackBuf();
 
-		Sleep ( 500 );
-		
-		FluidSetupCUDA ( NumPoints(), m_GridSrch, *(int3*)& m_GridRes, *(float3*)& m_GridSize, *(float3*)& m_GridDelta, *(float3*)& m_GridMin, *(float3*)& m_GridMax, m_GridTotal, (int) m_Vec[PEMIT_RATE].x );
+    SetupKernels();
 
-		Sleep ( 500 );
+    SetupSpacing();
 
-		Vector3DF grav = m_Vec[PPLANE_GRAV_DIR];
-		FluidParamCUDA ( m_Param[PSIMSCALE], m_Param[PSMOOTHRADIUS], m_Param[PRADIUS], m_Param[PMASS], m_Param[PRESTDENSITY], *(float3*)& m_Vec[PBOUNDMIN], *(float3*)& m_Vec[PBOUNDMAX], m_Param[PEXTSTIFF], m_Param[PINTSTIFF], m_Param[PVISC], m_Param[PEXTDAMP], m_Param[PFORCE_MIN], m_Param[PFORCE_MAX], m_Param[PFORCE_FREQ], m_Param[PGROUND_SLOPE], grav.x, grav.y, grav.z, m_Param[PACCEL_LIMIT], m_Param[PVEL_LIMIT] );
+    SetupAddVolume(m_Vec[PINITMIN], m_Vec[PINITMAX], m_Param[PSPACING], 0.1, m_Param[PNUM]);        // Create the particles
 
-		TransferToCUDA ();		// Initial transfer
-	#endif
+    SetupGridAllocate(m_Vec[PVOLMIN], m_Vec[PVOLMAX], m_Param[PSIMSCALE], m_Param[PGRIDSIZE], 1.0);	// Setup grid
+
+    #ifdef BUILD_CUDA
+
+        FluidClearCUDA();
+
+        Sleep(500);
+
+        FluidSetupCUDA(NumPoints(), m_GridSrch, *(int3*)& m_GridRes, *(float3*)& m_GridSize, *(float3*)& m_GridDelta, *(float3*)& m_GridMin, *(float3*)& m_GridMax, m_GridTotal, (int)m_Vec[PEMIT_RATE].x);
+
+        Sleep(500);
+
+        Vector3DF grav = m_Vec[PPLANE_GRAV_DIR];
+        FluidParamCUDA(m_Param[PSIMSCALE], m_Param[PSMOOTHRADIUS], m_Param[PRADIUS], m_Param[PMASS], m_Param[PRESTDENSITY], *(float3*)& m_Vec[PBOUNDMIN], *(float3*)& m_Vec[PBOUNDMAX], m_Param[PEXTSTIFF], m_Param[PINTSTIFF], m_Param[PVISC], m_Param[PEXTDAMP], m_Param[PFORCE_MIN], m_Param[PFORCE_MAX], m_Param[PFORCE_FREQ], m_Param[PGROUND_SLOPE], grav.x, grav.y, grav.z, m_Param[PACCEL_LIMIT], m_Param[PVEL_LIMIT]);
+
+        TransferToCUDA();		// Initial transfer
+
+    #endif
 }
 
 void FluidSystem::SetParam (int p, float v )
@@ -196,6 +201,68 @@ void FluidSystem::Exit ()
 	cudaExit ();
 
 
+}
+
+// M: Allocate memory for Surface Particles
+void FluidSystem::AllocateSurfaceParticles(int cnt)
+{
+    int nump = 0;		// number to copy from previous data
+
+    Vector3DF* srcPos = sfPos;
+    sfPos = (Vector3DF*)malloc(cnt * sizeof(Vector3DF));
+    if (srcPos != 0x0) { memcpy(sfPos, srcPos, nump * sizeof(Vector3DF)); free(srcPos); }
+
+    DWORD* srcClr = sfClr;
+    sfClr = (DWORD*)malloc(cnt * sizeof(DWORD));
+    if (srcClr != 0x0) { memcpy(sfClr, srcClr, nump * sizeof(DWORD)); free(srcClr); }
+
+    Vector3DF* srcVel = sfVel;
+    sfVel = (Vector3DF*)malloc(cnt * sizeof(Vector3DF));
+    if (srcVel != 0x0) { memcpy(sfVel, srcVel, nump * sizeof(Vector3DF)); free(srcVel); }
+
+    Vector3DF* srcVelEval = sfVelEval;
+    sfVelEval = (Vector3DF*)malloc(cnt * sizeof(Vector3DF));
+    if (srcVelEval != 0x0) { memcpy(sfVelEval, srcVelEval, nump * sizeof(Vector3DF)); free(srcVelEval); }
+
+    unsigned short* srcAge = sfAge;
+    sfAge = (unsigned short*)malloc(cnt * sizeof(unsigned short));
+    if (srcAge != 0x0) { memcpy(sfAge, srcAge, nump * sizeof(unsigned short)); free(srcAge); }
+
+    float* srcPress = sfPressure;
+    sfPressure = (float*)malloc(cnt * sizeof(float));
+    if (srcPress != 0x0) { memcpy(sfPressure, srcPress, nump * sizeof(float)); free(srcPress); }
+
+    float* srcDensity = sfDensity;
+    sfDensity = (float*)malloc(cnt * sizeof(float));
+    if (srcDensity != 0x0) { memcpy(sfDensity, srcDensity, nump * sizeof(float)); free(srcDensity); }
+
+    Vector3DF* srcForce = sfForce;
+    sfForce = (Vector3DF*)malloc(cnt * sizeof(Vector3DF));
+    if (srcForce != 0x0) { memcpy(sfForce, srcForce, nump * sizeof(Vector3DF)); free(srcForce); }
+
+    uint* srcCell = sfClusterCell;
+    sfClusterCell = (uint*)malloc(cnt * sizeof(uint));
+    if (srcCell != 0x0) { memcpy(sfClusterCell, srcCell, nump * sizeof(uint)); free(srcCell); }
+
+    uint* srcGCell = sfGridCell;
+    sfGridCell = (uint*)malloc(cnt * sizeof(uint));
+    if (srcGCell != 0x0) { memcpy(sfGridCell, srcGCell, nump * sizeof(uint)); free(srcGCell); }
+
+    uint* srcNext = sfGridNext;
+    sfGridNext = (uint*)malloc(cnt * sizeof(uint));
+    if (srcNext != 0x0) { memcpy(sfGridNext, srcNext, nump * sizeof(uint)); free(srcNext); }
+
+    uint* srcNbrNdx = sfNbrNdx;
+    sfNbrNdx = (uint*)malloc(cnt * sizeof(uint));
+    if (srcNbrNdx != 0x0) { memcpy(sfNbrNdx, srcNbrNdx, nump * sizeof(uint)); free(srcNbrNdx); }
+
+    uint* srcNbrCnt = sfNbrCnt;
+    sfNbrCnt = (uint*)malloc(cnt * sizeof(uint));
+    if (srcNbrCnt != 0x0) { memcpy(sfNbrCnt, srcNbrCnt, nump * sizeof(uint)); free(srcNbrCnt); }
+
+    m_Param[PSTAT_PMEM] = 68 * 2 * cnt;
+
+    sfMaxPoints = cnt;
 }
 
 
@@ -256,7 +323,7 @@ void FluidSystem::AllocateParticles ( int cnt )
 	mNbrCnt = (uint*)		malloc ( cnt*sizeof(uint) );
 	if ( srcNbrCnt != 0x0 )	{ memcpy ( mNbrCnt, srcNbrCnt, nump *sizeof(uint)); free ( srcNbrCnt ); }
 
-	m_Param[PSTAT_PMEM] = 68 * 2 * cnt;
+	m_Param[SFSTAT_PMEM] = 68 * 2 * cnt;
 
 	mMaxPoints = cnt;
 }
@@ -2180,6 +2247,7 @@ void FluidSystem::SetupKernels ()
 	m_Poly6Kern = 315.0f / (64.0f * 3.141592 * pow( m_Param[PSMOOTHRADIUS], 9) );	// Wpoly6 kernel (denominator part) - 2003 Muller, p.4
 	m_SpikyKern = -45.0f / (3.141592 * pow( m_Param[PSMOOTHRADIUS], 6) );			// Laplacian of viscocity (denominator): PI h^6
 	m_LapKern = 45.0f / (3.141592 * pow( m_Param[PSMOOTHRADIUS], 6) );
+
 }
 
 void FluidSystem::SetupDefaultParams ()
