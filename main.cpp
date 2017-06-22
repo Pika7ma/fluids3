@@ -87,7 +87,7 @@ int		iClrMode    = 0;                        // default 0
 bool    bPause      = false;                    // default false
 
 // View matrices
-float model_matrix[16];					// Model matrix (M) default 16
+float   model_matrix[16];					// Model matrix (M) default 16
 
 // Mouse control
 #define DRAG_OFF		0				// mouse states
@@ -112,9 +112,9 @@ GLuint	depth_id;
 
 #define MODE_DOF		6
 
-GLuint screenBufferObject;
-GLuint depthBufferObject;
-GLuint envid;
+GLuint  screenBufferObject;
+GLuint  depthBufferObject;
+GLuint  envid;
 
 void drawScene ( float* viewmat, bool bShade )
 {

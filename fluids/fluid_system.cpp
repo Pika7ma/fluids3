@@ -65,32 +65,32 @@ void FluidSystem::TransferFromCUDA ()
 //------------------------------ Initialization
 FluidSystem::FluidSystem ()
 {
-	mNumPoints = 0;
-	mMaxPoints = 0;
-	mPackBuf = 0x0;
-	mPackGrid = 0x0;
-	mFP = 0x0;
+	mNumPoints     = 0;
+	mMaxPoints     = 0;
+	mPackBuf       = 0x0;
+	mPackGrid      = 0x0;
+	mFP            = 0x0;
 
-	mPos = 0x0;
-	mClr = 0x0;
-	mVel = 0x0;
-	mVelEval = 0x0;
-	mAge = 0x0;
-	mPressure = 0x0;
-	mDensity = 0x0;
-	mForce = 0x0;
-	mClusterCell = 0x0;
-	mGridNext = 0x0;
-	mNbrNdx = 0x0;
-	mNbrCnt = 0x0;
-	mSelected = -1;
-	m_Grid = 0x0;
-	m_GridCnt = 0x0;
+	mPos           = 0x0;
+	mClr           = 0x0;
+	mVel           = 0x0;
+	mVelEval       = 0x0;
+	mAge           = 0x0;
+	mPressure      = 0x0;
+	mDensity       = 0x0;
+	mForce         = 0x0;
+	mClusterCell   = 0x0;
+	mGridNext      = 0x0;
+	mNbrNdx        = 0x0;
+	mNbrCnt        = 0x0;
+	mSelected      = -1;
+	m_Grid         = 0x0;
+	m_GridCnt      = 0x0;
 
-	m_Frame = 0;
+	m_Frame        = 0;
 	
-	m_NeighborTable = 0x0;
-	m_NeighborDist = 0x0;
+	m_NeighborTable    = 0x0;
+	m_NeighborDist     = 0x0;
 	
 	m_Param [ PMODE ]		    = RUN_CUDA_FULL;
 	m_Param [ PEXAMPLE ]	    = 1;

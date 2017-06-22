@@ -70,8 +70,6 @@ bool cudaCheck ( cudaError_t status, char* msg )
 		app_getch ();
 		MessageBoxA ( NULL, cudaGetErrorString ( status ), msg, MB_OK );
 		return false;
-	} else {
-		//app_printf ( "%s. OK.\n", msg );
 	}
 	return true;
 }
@@ -257,38 +255,38 @@ void FluidSetupCUDA ( int num, int gsrch, int3 res, float3 size, float3 delta, f
 
 void FluidParamCUDA ( float ss, float sr, float pr, float mass, float rest, float3 bmin, float3 bmax, float estiff, float istiff, float visc, float damp, float fmin, float fmax, float ffreq, float gslope, float gx, float gy, float gz, float al, float vl )
 {
-	fcuda.psimscale = ss;
+	fcuda.psimscale 	= ss;
 	fcuda.psmoothradius = sr;
-	fcuda.pradius = pr;
-	fcuda.r2 = sr * sr;
-	fcuda.pmass = mass;
-	fcuda.prest_dens = rest;	
-	fcuda.pboundmin = bmin;
-	fcuda.pboundmax = bmax;
-	fcuda.pextstiff = estiff;
-	fcuda.pintstiff = istiff;
-	fcuda.pvisc = visc;
-	fcuda.pdamp = damp;
-	fcuda.pforce_min = fmin;
-	fcuda.pforce_max = fmax;
-	fcuda.pforce_freq = ffreq;
-	fcuda.pground_slope = gslope;
-	fcuda.pgravity = make_float3( gx, gy, gz );
-	fcuda.AL = al;
-	fcuda.AL2 = al * al;
-	fcuda.VL = vl;
-	fcuda.VL2 = vl * vl;
+	fcuda.pradius 		= pr;
+	fcuda.r2 			= sr * sr;
+	fcuda.pmass 		= mass;
+	fcuda.prest_dens 	= rest;	
+	fcuda.pboundmin 	= bmin;
+	fcuda.pboundmax 	= bmax;
+	fcuda.pextstiff 	= estiff;
+	fcuda.pintstiff 	= istiff;
+	fcuda.pvisc 		= visc;
+	fcuda.pdamp 		= damp;
+	fcuda.pforce_min 	= fmin;
+	fcuda.pforce_max 	= fmax;
+	fcuda.pforce_freq 	= ffreq;
+	fcuda.pground_slope	= gslope;
+	fcuda.pgravity 		= make_float3( gx, gy, gz );
+	fcuda.AL 			= al;
+	fcuda.AL2 			= al * al;
+	fcuda.VL 			= vl;
+	fcuda.VL2 			= vl * vl;
 
 	//app_printf ( "Bound Min: %f %f %f\n", bmin.x, bmin.y, bmin.z );
 	//app_printf ( "Bound Max: %f %f %f\n", bmax.x, bmax.y, bmax.z );
 
-	fcuda.pdist = pow ( fcuda.pmass / fcuda.prest_dens, 1/3.0f );
+	fcuda.pdist 	= pow ( fcuda.pmass / fcuda.prest_dens, 1/3.0f );
 	fcuda.poly6kern = 315.0f / (64.0f * 3.141592 * pow( sr, 9.0f) );
 	fcuda.spikykern = -45.0f / (3.141592 * pow( sr, 6.0f) );
-	fcuda.lapkern = 45.0f / (3.141592 * pow( sr, 6.0f) );	
+	fcuda.lapkern 	= 45.0f / (3.141592 * pow( sr, 6.0f) );	
 
-	fcuda.d2 = fcuda.psimscale * fcuda.psimscale;
-	fcuda.rd2 = fcuda.r2 / fcuda.d2;
+	fcuda.d2 	= fcuda.psimscale * fcuda.psimscale;
+	fcuda.rd2 	= fcuda.r2 / fcuda.d2;
 	fcuda.vterm = fcuda.lapkern * fcuda.pvisc;
 
 	// Transfer sim params to device
@@ -301,13 +299,13 @@ void CopyToCUDA ( float* pos, float* vel, float* veleval, float* force, float* p
 {
 	// Send particle buffers
 	int numPoints = fcuda.pnum;
-	cudaCheck( cudaMemcpy ( fbuf.mpos,		pos,			numPoints*sizeof(float)*3, cudaMemcpyHostToDevice ), 	"Memcpy mpos ToDev" );	
-	cudaCheck( cudaMemcpy ( fbuf.mvel,		vel,			numPoints*sizeof(float)*3, cudaMemcpyHostToDevice ), 	"Memcpy mvel ToDev" );
-	cudaCheck( cudaMemcpy ( fbuf.mveleval, veleval,		numPoints*sizeof(float)*3, cudaMemcpyHostToDevice ), 		"Memcpy mveleval ToDev"  );
-	cudaCheck( cudaMemcpy ( fbuf.mforce,	force,			numPoints*sizeof(float)*3, cudaMemcpyHostToDevice ), 	"Memcpy mforce ToDev"  );
-	cudaCheck( cudaMemcpy ( fbuf.mpress,	pressure,		numPoints*sizeof(float),  cudaMemcpyHostToDevice ), 	"Memcpy mpress ToDev"  );
-	cudaCheck( cudaMemcpy ( fbuf.mdensity, density,		numPoints*sizeof(float),  cudaMemcpyHostToDevice ), 		"Memcpy mdensity ToDev"  );
-	cudaCheck( cudaMemcpy ( fbuf.mclr,		clr,			numPoints*sizeof(uint), cudaMemcpyHostToDevice ), 		"Memcpy mclr ToDev"  );
+	cudaCheck( cudaMemcpy ( fbuf.mpos,		pos,		numPoints*sizeof(float)*3, cudaMemcpyHostToDevice ),	"Memcpy mpos ToDev" );	
+	cudaCheck( cudaMemcpy ( fbuf.mvel,		vel,		numPoints*sizeof(float)*3, cudaMemcpyHostToDevice ),	"Memcpy mvel ToDev" );
+	cudaCheck( cudaMemcpy ( fbuf.mveleval, 	veleval,	numPoints*sizeof(float)*3, cudaMemcpyHostToDevice ),	"Memcpy mveleval ToDev"  );
+	cudaCheck( cudaMemcpy ( fbuf.mforce,	force,		numPoints*sizeof(float)*3, cudaMemcpyHostToDevice ),	"Memcpy mforce ToDev"  );
+	cudaCheck( cudaMemcpy ( fbuf.mpress,	pressure,	numPoints*sizeof(float),  cudaMemcpyHostToDevice ),		"Memcpy mpress ToDev"  );
+	cudaCheck( cudaMemcpy ( fbuf.mdensity, 	density,	numPoints*sizeof(float),  cudaMemcpyHostToDevice ), 	"Memcpy mdensity ToDev"  );
+	cudaCheck( cudaMemcpy ( fbuf.mclr,		clr,		numPoints*sizeof(uint), cudaMemcpyHostToDevice ), 		"Memcpy mclr ToDev"  );
 
 	cudaThreadSynchronize ();	
 }
@@ -316,8 +314,8 @@ void CopyFromCUDA ( float* pos, float* vel, float* veleval, float* force, float*
 {
 	// Return particle buffers
 	int numPoints = fcuda.pnum;
-	if ( pos != 0x0 ) cudaCheck( cudaMemcpy ( pos,		fbuf.mpos,			numPoints*sizeof(float)*3, cudaMemcpyDeviceToHost ),	"Memcpy mpos FromDev"  );
-	if ( clr != 0x0 ) cudaCheck( cudaMemcpy ( clr,		fbuf.mclr,			numPoints*sizeof(uint),  cudaMemcpyDeviceToHost ), 		"Memcpy mclr FromDev"  );
+	if ( pos != 0x0 ) cudaCheck( cudaMemcpy ( pos,	fbuf.mpos,	numPoints*sizeof(float)*3, 	cudaMemcpyDeviceToHost ),	"Memcpy mpos FromDev"  );
+	if ( clr != 0x0 ) cudaCheck( cudaMemcpy ( clr,	fbuf.mclr,	numPoints*sizeof(uint),  	cudaMemcpyDeviceToHost ), 	"Memcpy mclr FromDev"  );
 	/*cudaCheck( cudaMemcpy ( vel,		fbuf.mvel,			numPoints*sizeof(float)*3, cudaMemcpyDeviceToHost ) );
 	cudaCheck( cudaMemcpy ( veleval,	fbuf.mveleval,		numPoints*sizeof(float)*3, cudaMemcpyDeviceToHost ) );
 	cudaCheck( cudaMemcpy ( force,		fbuf.mforce,		numPoints*sizeof(float)*3, cudaMemcpyDeviceToHost ) );
@@ -503,10 +501,10 @@ inline int floorPow2(int n) {
 
 #define BLOCK_SIZE 256
 
-float**			g_scanBlockSums = 0;
-int**			g_scanBlockSumsInt = 0;
-unsigned int	g_numEltsAllocated = 0;
-unsigned int	g_numLevelsAllocated = 0;
+float**			g_scanBlockSums 		= 0;
+int**			g_scanBlockSumsInt 		= 0;
+unsigned int	g_numEltsAllocated 		= 0;
+unsigned int	g_numLevelsAllocated 	= 0;
 
 void preallocBlockSums(unsigned int maxNumElements)
 {
@@ -518,7 +516,7 @@ void preallocBlockSums(unsigned int maxNumElements)
     int level = 0;
 
     do {       
-        unsigned int numBlocks =   max(1, (int)ceil((float)numElts / (2.f * blockSize)));
+        unsigned int numBlocks = max(1, (int)ceil((float)numElts / (2.f * blockSize)));
         if (numBlocks > 1) level++;
         numElts = numBlocks;
     } while (numElts > 1);
