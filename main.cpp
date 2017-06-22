@@ -259,6 +259,8 @@ void display ()
     if (guiChanged(3)) 	psys.SetVec(PPLANE_GRAV_DIR, Vector3DF(0, -gravity, 0));
     if (guiChanged(4)) 	psys.SetParam(PVISC, visc);
     if (guiChanged(5)) 	psys.SetParam(PRESTDENSITY, restdens);
+
+    // M: modify # of surface particle
     if (guiChanged(6)) {
         psys.SetParam(SFNUM, psys_count_sf, 4, 40000000);
         psys.Setup(false);
