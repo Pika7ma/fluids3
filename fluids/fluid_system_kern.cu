@@ -56,19 +56,19 @@ __global__ void insertParticles(bufList buf, int pnum) {
     uint i = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;	// particle index
     if (i >= pnum) return;
 
-    register float3 gridMin = simData.gridMin;
-    register float3 gridDelta = simData.gridDelta;
-    register int3 gridRes = simData.gridRes;
-    register int3 gridScan = simData.gridScanMax;
-    register float poff = simData.psmoothradius / simData.psimscale;
+    register float3 gridMin     = simData.gridMin;
+    register float3 gridDelta   = simData.gridDelta;
+    register int3 gridRes       = simData.gridRes;
+    register int3 gridScan      = simData.gridScanMax;
+    register float poff         = simData.psmoothradius / simData.psimscale;
 
     register int		gs;
     register float3		gcf;
     register int3		gc;
 
     gcf = (buf.mpos[i] - gridMin) * gridDelta;  // M: the relative position in simulation
-    gc = make_int3(int(gcf.x), int(gcf.y), int(gcf.z));
-    gs = (gc.y * gridRes.z + gc.z)*gridRes.x + gc.x;    // M: turn 3D to 1D
+    gc  = make_int3(int(gcf.x), int(gcf.y), int(gcf.z));
+    gs  = (gc.y * gridRes.z + gc.z)*gridRes.x + gc.x;    // M: turn 3D to 1D
     if (gc.x >= 1 && gc.x <= gridScan.x && gc.y >= 1 && gc.y <= gridScan.y && gc.z >= 1 && gc.z <= gridScan.z) {  // M: for all the particles in the simulation domain
         buf.mgcell[i] = gs;											// Grid cell insert. M: insert the grid cell index into the property of this particle
         buf.mgndx[i] = atomicAdd(&buf.mgridcnt[gs], 1);		// Grid counts. M: 1. record the number of particles in this grid cell 2. record the rank of the particle in the cell

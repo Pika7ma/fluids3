@@ -2141,21 +2141,21 @@ void FluidSystem::RunPlayback ()
 }
 
 
-
+// M: get running mode
 std::string FluidSystem::getModeStr ()
 {
 	char buf[100];
 
 	switch ( (int) m_Param[PMODE] ) {
-	case RUN_SEARCH:		sprintf ( buf, "SEARCH ONLY (CPU)" );		break;
-	case RUN_VALIDATE:		sprintf ( buf, "VALIDATE GPU to CPU");		break;
-	case RUN_CPU_SLOW:		sprintf ( buf, "SIMULATE CPU Slow");		break;
-	case RUN_CPU_GRID:		sprintf ( buf, "SIMULATE CPU Grid");		break;
-	case RUN_CUDA_RADIX:	sprintf ( buf, "SIMULATE CUDA Radix Sort");	break;
-	case RUN_CUDA_INDEX:	sprintf ( buf, "SIMULATE CUDA Index Sort" ); break;
-	case RUN_CUDA_FULL:	sprintf ( buf, "SIMULATE CUDA Full Sort" );	break;
-	case RUN_CUDA_CLUSTER:	sprintf ( buf, "SIMULATE CUDA Clustering" );	break;
-	case RUN_PLAYBACK:		sprintf ( buf, "PLAYBACK (%s)", mFileName.c_str() ); break;
+	case RUN_SEARCH:       sprintf ( buf, "SEARCH ONLY (CPU)" );                   break;
+	case RUN_VALIDATE:     sprintf ( buf, "VALIDATE GPU to CPU");                  break;
+	case RUN_CPU_SLOW:     sprintf ( buf, "SIMULATE CPU Slow");                    break;
+	case RUN_CPU_GRID:     sprintf ( buf, "SIMULATE CPU Grid");                    break;
+	case RUN_CUDA_RADIX:   sprintf ( buf, "SIMULATE CUDA Radix Sort");             break;
+	case RUN_CUDA_INDEX:   sprintf ( buf, "SIMULATE CUDA Index Sort" );            break;
+	case RUN_CUDA_FULL:	   sprintf ( buf, "SIMULATE CUDA Full Sort" );             break;
+	case RUN_CUDA_CLUSTER: sprintf ( buf, "SIMULATE CUDA Clustering" );            break;
+	case RUN_PLAYBACK:     sprintf ( buf, "PLAYBACK (%s)", mFileName.c_str() );    break;
 	};
 	//sprintf ( buf, "RECORDING (%s, %.4f MB)", mFileName.c_str(), mFileSize ); break;
 	return buf;
