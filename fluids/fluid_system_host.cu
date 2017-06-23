@@ -92,18 +92,19 @@ void cudaInit()
 	int count = 0;
 	int i = 0;
 
+    // M: get # of cuda device, then return the errs
 	cudaError_t err = cudaGetDeviceCount(&count);
-	if ( err==cudaErrorInsufficientDriver) { app_printEXIT( "CUDA driver not installed.\n"); }
-	if ( err==cudaErrorNoDevice) { app_printEXIT ( "No CUDA device found.\n"); }
-	if ( count == 0) { app_printEXIT ( "No CUDA device found.\n"); }
+    if (err == cudaErrorInsufficientDriver) { app_printEXIT("CUDA driver not installed.\n"); }
+    if (err == cudaErrorNoDevice) { app_printEXIT("No CUDA device found.\n"); }
+    if (count == 0) { app_printEXIT("No CUDA device found.\n"); }
 
-	for(i = 0; i < count; i++) {
-		cudaDeviceProp prop;
-		if(cudaGetDeviceProperties(&prop, i) == cudaSuccess)
-			if(prop.major >= 1) break;
-	}
-	if(i == count) { app_printEXIT ( "No CUDA device found.\n");  }
-	cudaSetDevice(i);
+    for (i = 0; i < count; ++i) {
+        cudaDeviceProp prop;
+        if (cudaGetDeviceProperties(&prop, i) == cudaSuccess)
+            if (prop.major >= 1) break; // M: find the cuda device with enough capacity
+    }
+    if (i == count) { app_printEXIT("No CUDA device found.\n"); } // M: no device has enough capacity
+    cudaSetDevice(i); // M: set the cuda device
 
 	app_printf( "CUDA initialized.\n");
  
@@ -198,11 +199,11 @@ void FluidSetupCUDA ( int num, int gsrch, int3 res, float3 size, float3 delta, f
 	fcuda.chk = chk;
 
 	// Build Adjacency Lookup
-	int cell = 0;
-	for (int y=0; y < gsrch; y++ ) 
-		for (int z=0; z < gsrch; z++ ) 
-			for (int x=0; x < gsrch; x++ ) 
-				fcuda.gridAdj [ cell++]  = ( y * fcuda.gridRes.z+ z )*fcuda.gridRes.x +  x ;			
+    int cell = 0;
+    for (int y = 0; y < gsrch; y++)
+        for (int z = 0; z < gsrch; z++)
+            for (int x = 0; x < gsrch; x++)
+                fcuda.gridAdj[cell++] = (y * fcuda.gridRes.z + z) * fcuda.gridRes.x + x;
 	
 	app_printf ( "CUDA Adjacency Table\n");
 	for (int n=0; n < fcuda.gridAdjCnt; n++ ) {
@@ -213,9 +214,9 @@ void FluidSetupCUDA ( int num, int gsrch, int3 res, float3 size, float3 delta, f
 	
 	int threadsPerBlock = 192;
 
-    computeNumBlocks ( fcuda.pnum, threadsPerBlock, fcuda.numBlocks, fcuda.numThreads);				// particles
-    computeNumBlocks ( fcuda.gridTotal, threadsPerBlock, fcuda.gridBlocks, fcuda.gridThreads);		// grid cell
-    
+    computeNumBlocks(fcuda.pnum,        threadsPerBlock,    fcuda.numBlocks,   fcuda.numThreads);		// particles
+    computeNumBlocks(fcuda.gridTotal,   threadsPerBlock,    fcuda.gridBlocks,  fcuda.gridThreads);		// grid cell
+
 	// Allocate particle buffers
     fcuda.szPnts = (fcuda.numBlocks  * fcuda.numThreads);     
     app_printf ( "CUDA Allocate: \n" );
@@ -298,14 +299,14 @@ void FluidParamCUDA ( float ss, float sr, float pr, float mass, float rest, floa
 void CopyToCUDA ( float* pos, float* vel, float* veleval, float* force, float* pressure, float* density, uint* cluster, uint* gnext, char* clr )
 {
 	// Send particle buffers
-	int numPoints = fcuda.pnum;
-	cudaCheck( cudaMemcpy ( fbuf.mpos,		pos,		numPoints*sizeof(float)*3, cudaMemcpyHostToDevice ),	"Memcpy mpos ToDev" );	
-	cudaCheck( cudaMemcpy ( fbuf.mvel,		vel,		numPoints*sizeof(float)*3, cudaMemcpyHostToDevice ),	"Memcpy mvel ToDev" );
-	cudaCheck( cudaMemcpy ( fbuf.mveleval, 	veleval,	numPoints*sizeof(float)*3, cudaMemcpyHostToDevice ),	"Memcpy mveleval ToDev"  );
-	cudaCheck( cudaMemcpy ( fbuf.mforce,	force,		numPoints*sizeof(float)*3, cudaMemcpyHostToDevice ),	"Memcpy mforce ToDev"  );
-	cudaCheck( cudaMemcpy ( fbuf.mpress,	pressure,	numPoints*sizeof(float),  cudaMemcpyHostToDevice ),		"Memcpy mpress ToDev"  );
-	cudaCheck( cudaMemcpy ( fbuf.mdensity, 	density,	numPoints*sizeof(float),  cudaMemcpyHostToDevice ), 	"Memcpy mdensity ToDev"  );
-	cudaCheck( cudaMemcpy ( fbuf.mclr,		clr,		numPoints*sizeof(uint), cudaMemcpyHostToDevice ), 		"Memcpy mclr ToDev"  );
+    int numPoints = fcuda.pnum;
+    cudaCheck(cudaMemcpy(fbuf.mpos,     pos,        numPoints * sizeof(float) * 3,  cudaMemcpyHostToDevice), "Memcpy mpos ToDev");
+    cudaCheck(cudaMemcpy(fbuf.mvel,     vel,        numPoints * sizeof(float) * 3,  cudaMemcpyHostToDevice), "Memcpy mvel ToDev");
+    cudaCheck(cudaMemcpy(fbuf.mveleval, veleval,    numPoints * sizeof(float) * 3,  cudaMemcpyHostToDevice), "Memcpy mveleval ToDev");
+    cudaCheck(cudaMemcpy(fbuf.mforce,   force,      numPoints * sizeof(float) * 3,  cudaMemcpyHostToDevice), "Memcpy mforce ToDev");
+    cudaCheck(cudaMemcpy(fbuf.mpress,   pressure,   numPoints * sizeof(float),      cudaMemcpyHostToDevice), "Memcpy mpress ToDev");
+    cudaCheck(cudaMemcpy(fbuf.mdensity, density,    numPoints * sizeof(float),      cudaMemcpyHostToDevice), "Memcpy mdensity ToDev");
+    cudaCheck(cudaMemcpy(fbuf.mclr,     clr,        numPoints * sizeof(uint),       cudaMemcpyHostToDevice), "Memcpy mclr ToDev");
 
 	cudaThreadSynchronize ();	
 }

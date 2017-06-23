@@ -332,13 +332,13 @@ int FluidSystem::AddParticle ()
 {
 	if ( mNumPoints >= mMaxPoints ) return -1;
 	int n = mNumPoints;
-	(mPos + n)->Set ( 0,0,0 );
-	(mVel + n)->Set ( 0,0,0 );
-	(mVelEval + n)->Set ( 0,0,0 );
-	(mForce + n)->Set ( 0,0,0 );
-	*(mPressure + n) = 0;
-	*(mDensity + n) = 0;
-	*(mGridNext + n) = -1;
+	(mPos + n)      ->Set ( 0,0,0 );
+	(mVel + n)      ->Set ( 0,0,0 );
+	(mVelEval + n)  ->Set ( 0,0,0 );
+	(mForce + n)    ->Set ( 0,0,0 );
+	*(mPressure + n)    = 0;
+	*(mDensity + n)     = 0;
+	*(mGridNext + n)    = -1;
 	*(mClusterCell + n) = -1;
 	
 	mNumPoints++;
@@ -350,12 +350,10 @@ void FluidSystem::SetupAddVolume ( Vector3DF min, Vector3DF max, float spacing, 
 	Vector3DF pos;
 	int n, p;
 	float dx, dy, dz, x, y, z;
-	int cntx, cnty, cntz;
+	int cntx, cntz;
 	cntx = ceil( (max.x-min.x-offs) / spacing );
 	cntz = ceil( (max.z-min.z-offs) / spacing );
 	int cnt = cntx * cntz;
-	int xp, yp, zp, c2;
-	float odd;
 	
 	min += offs;
 	max -= offs;
@@ -363,20 +361,22 @@ void FluidSystem::SetupAddVolume ( Vector3DF min, Vector3DF max, float spacing, 
 	dx = max.x-min.x;
 	dy = max.y-min.y;
 	dz = max.z-min.z;
-		
-	c2 = cnt/2;
-	for (float y = min.y; y <= max.y; y += spacing ) {	
+
+	for (y = min.y; y <= max.y; y += spacing ) {	
 		for (int xz=0; xz < cnt; xz++ ) {
 			
 			x = min.x + (xz % int(cntx))*spacing;
 			z = min.z + (xz / int(cntx))*spacing;
 			p = AddParticle ();
 			if ( p != -1 ) {
+                // M: set position for new point
 				(mPos+p)->Set ( x,y,z);
+
+                // M: assign color for new point
 				Vector3DF clr ( (x-min.x)/dx, (y-min.y)/dy, (z-min.z)/dz );
 				clr *= 0.8;
-				clr += 0.2;				
-				*(mClr+p) = COLORA( clr.x, clr.y, clr.z, 1); 
+				clr += 0.2;		
+                *(mClr+p) = COLORA( clr.x, clr.y, clr.z, 1); 
 				//*(mClr+p) = COLORA( 0.25, +0.25 + (y-min.y)*.75/dy, 0.25 + (z-min.z)*.75/dz, 1);  // (x-min.x)/dx
 			}
 		}
@@ -711,15 +711,15 @@ void FluidSystem::Run (int width, int height)
 	#endif	
 
 	switch ( (int) m_Param[PMODE] ) {
-	case RUN_SEARCH:		RunSearchCPU();			break;
-	case RUN_VALIDATE:		RunValidate();			break;
-	case RUN_CPU_SLOW:		RunSimulateCPUSlow();	break;
-	case RUN_CPU_GRID:		RunSimulateCPUGrid();	break;
-	case RUN_CUDA_RADIX:	RunSimulateCUDARadix();	break;
-	case RUN_CUDA_INDEX:	RunSimulateCUDAIndex();	break;
-	case RUN_CUDA_FULL:	RunSimulateCUDAFull();	break;
+	case RUN_SEARCH:		RunSearchCPU();			    break;
+	case RUN_VALIDATE:		RunValidate();			    break;
+	case RUN_CPU_SLOW:		RunSimulateCPUSlow();	    break;
+	case RUN_CPU_GRID:		RunSimulateCPUGrid();	    break;
+	case RUN_CUDA_RADIX:	RunSimulateCUDARadix();	    break;
+	case RUN_CUDA_INDEX:	RunSimulateCUDAIndex();	    break;
+	case RUN_CUDA_FULL:	    RunSimulateCUDAFull();	    break;
 	case RUN_CUDA_CLUSTER:	RunSimulateCUDACluster();	break;
-	case RUN_PLAYBACK:		RunPlayback();			break;
+	case RUN_PLAYBACK:		RunPlayback();			    break;
 	};
 
 	/*if ( mMode == RUN_RECORD ) {
@@ -1104,8 +1104,7 @@ void FluidSystem::SetupGridAllocate ( Vector3DF min, Vector3DF max, float sim_sc
 	
 	m_GridMin = min;
 	m_GridMax = max;
-	m_GridSize = m_GridMax;
-	m_GridSize -= m_GridMin;    // M: Grid Size (x, y, z) | refers to the length of each coordinates in a real world
+	m_GridSize = m_GridMax - m_GridMin; // M: Grid Size (x, y, z) | refers to the length of each coordinates in a real world
 	m_GridRes.x = ceil ( m_GridSize.x / world_cellsize );   // Determine grid resolution
 	m_GridRes.y = ceil ( m_GridSize.y / world_cellsize );
 	m_GridRes.z = ceil ( m_GridSize.z / world_cellsize );   // M: Grid Resolution (x, y, z) | refers to # of cells within each coordinates in the simulation
@@ -1118,13 +1117,13 @@ void FluidSystem::SetupGridAllocate ( Vector3DF min, Vector3DF max, float sim_sc
 	
 	m_GridTotal = (int)(m_GridRes.x * m_GridRes.y * m_GridRes.z);
 
-	// Allocate grid
-	if ( m_Grid == 0x0 ) free (m_Grid);
-	if ( m_GridCnt == 0x0 ) free (m_GridCnt);
-	m_Grid = (uint*) malloc ( sizeof(uint*) * m_GridTotal );
-	m_GridCnt = (uint*) malloc ( sizeof(uint*) * m_GridTotal );
-	memset ( m_Grid, GRID_UCHAR, m_GridTotal*sizeof(uint) );
-	memset ( m_GridCnt, GRID_UCHAR, m_GridTotal*sizeof(uint) );
+    // Allocate grid
+    if (m_Grid      != 0x0) free(m_Grid);
+    if (m_GridCnt   != 0x0) free(m_GridCnt);
+    m_Grid      = (uint*)malloc(sizeof(uint*) * m_GridTotal);
+    m_GridCnt   = (uint*)malloc(sizeof(uint*) * m_GridTotal);
+    memset(m_Grid,      GRID_UCHAR, m_GridTotal * sizeof(uint));
+    memset(m_GridCnt,   GRID_UCHAR, m_GridTotal * sizeof(uint));
 
 	m_Param[PSTAT_GMEM] = 12 * m_GridTotal;		// Grid memory used
 
@@ -1140,12 +1139,13 @@ void FluidSystem::SetupGridAllocate ( Vector3DF min, Vector3DF max, float sim_sc
 		exit(-1);
 	}
 
-	int cell = 0;
-	for (int y=0; y < m_GridSrch; y++ ) 
-		for (int z=0; z < m_GridSrch; z++ ) 
-			for (int x=0; x < m_GridSrch; x++ ) 
-				m_GridAdj[cell++] = ( y*m_GridRes.z + z )*m_GridRes.x +  x ;			// -1 compensates for ndx 0=empty
-				
+
+    int cell = 0;
+    for (int y = 0; y < m_GridSrch; y++)
+        for (int z = 0; z < m_GridSrch; z++)
+            for (int x = 0; x < m_GridSrch; x++)
+                m_GridAdj[cell++] = (y * m_GridRes.z + z) * m_GridRes.x + x;			// -1 compensates for ndx 0=empty
+
 
 	app_printf ( "Adjacency table (CPU) \n");
 	for (int n=0; n < m_GridAdjCnt; n++ ) {
@@ -1619,7 +1619,8 @@ void FluidSystem::SetupRender ()
 
 	free ( buf );
 		
-	mImg.LoadPng ( "ball32.png" );
+    mImg.LoadPng("ball32.png");
+    //mImg.LoadPng("huaji.png");
 	mImg.UpdateTex ();
 
 	// Enable Instacing shader
@@ -2300,8 +2301,8 @@ void FluidSystem::SetupDefaultParams ()
 	m_Param [ PINTSTIFF ] =		1.5;
 	m_Param [ PEXTSTIFF ] =		50000.0;
 	m_Param [ PEXTDAMP ] =		100.0;
-	m_Param [ PACCEL_LIMIT ] =	150.0;			// m / s^2
-	m_Param [ PVEL_LIMIT ] =	3.0;			// m / s
+	m_Param [ PACCEL_LIMIT ] =	150.0;			// m / s^2 M: max a
+	m_Param [ PVEL_LIMIT ] =	3.0;			// m / s M: max v
 	m_Param [ PMAX_FRAC ] = 1.0;
 	m_Param [ PPOINT_GRAV_AMT ] = 0.0;
 
