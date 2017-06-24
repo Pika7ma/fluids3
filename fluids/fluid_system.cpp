@@ -377,6 +377,7 @@ void FluidSystem::SetupAddVolume ( Vector3DF min, Vector3DF max, float spacing, 
 				clr *= 0.8;
 				clr += 0.2;		
                 *(mClr+p) = COLORA( clr.x, clr.y, clr.z, 1); 
+                //*(mClr + p) = COLORA(1, 1, 1, 1);
 				//*(mClr+p) = COLORA( 0.25, +0.25 + (y-min.y)*.75/dy, 0.25 + (z-min.z)*.75/dz, 1);  // (x-min.x)/dx
 			}
 		}
@@ -1695,7 +1696,8 @@ void FluidSystem::DrawParticle ( int p, int r1, int r2, Vector3DF clr )
 	
 	glPointSize ( r2 );	
 	glBegin ( GL_POINTS );
-	glColor3f ( clr.x, clr.y, clr.z ); glVertex3f ( ppos->x, ppos->y, ppos->z );
+	//glColor3f ( clr.x, clr.y, clr.z );
+    //glVertex3f ( ppos->x, ppos->y, ppos->z );
 	glEnd ();
 
 	glEnable ( GL_DEPTH_TEST );
