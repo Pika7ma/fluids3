@@ -188,8 +188,6 @@
 		void AddEmit ( float spacing );
 		int NumPoints ()		{ return mNumPoints; }
 		
-        // M: Surface Particle Utilities
-        void AllocateSurfaceParticles(int cnt);
 
 		// Setup
 		void Setup ( bool bStart );

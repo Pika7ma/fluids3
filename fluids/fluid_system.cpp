@@ -132,8 +132,6 @@ void FluidSystem::Setup(bool bStart)
 
     AllocateParticles(m_Param[PNUM]);
 
-    AllocateSurfaceParticles(m_Param[SFNUM]);
-
     AllocatePackBuf();
 
     SetupKernels();
@@ -201,68 +199,6 @@ void FluidSystem::Exit ()
 	cudaExit ();
 
 
-}
-
-// M: Allocate memory for Surface Particles
-void FluidSystem::AllocateSurfaceParticles(int cnt)
-{
-    int nump = 0;		// number to copy from previous data
-
-    Vector3DF* srcPos = sfPos;
-    sfPos = (Vector3DF*)malloc(cnt * sizeof(Vector3DF));
-    if (srcPos != 0x0) { memcpy(sfPos, srcPos, nump * sizeof(Vector3DF)); free(srcPos); }
-
-    DWORD* srcClr = sfClr;
-    sfClr = (DWORD*)malloc(cnt * sizeof(DWORD));
-    if (srcClr != 0x0) { memcpy(sfClr, srcClr, nump * sizeof(DWORD)); free(srcClr); }
-
-    Vector3DF* srcVel = sfVel;
-    sfVel = (Vector3DF*)malloc(cnt * sizeof(Vector3DF));
-    if (srcVel != 0x0) { memcpy(sfVel, srcVel, nump * sizeof(Vector3DF)); free(srcVel); }
-
-    Vector3DF* srcVelEval = sfVelEval;
-    sfVelEval = (Vector3DF*)malloc(cnt * sizeof(Vector3DF));
-    if (srcVelEval != 0x0) { memcpy(sfVelEval, srcVelEval, nump * sizeof(Vector3DF)); free(srcVelEval); }
-
-    unsigned short* srcAge = sfAge;
-    sfAge = (unsigned short*)malloc(cnt * sizeof(unsigned short));
-    if (srcAge != 0x0) { memcpy(sfAge, srcAge, nump * sizeof(unsigned short)); free(srcAge); }
-
-    float* srcPress = sfPressure;
-    sfPressure = (float*)malloc(cnt * sizeof(float));
-    if (srcPress != 0x0) { memcpy(sfPressure, srcPress, nump * sizeof(float)); free(srcPress); }
-
-    float* srcDensity = sfDensity;
-    sfDensity = (float*)malloc(cnt * sizeof(float));
-    if (srcDensity != 0x0) { memcpy(sfDensity, srcDensity, nump * sizeof(float)); free(srcDensity); }
-
-    Vector3DF* srcForce = sfForce;
-    sfForce = (Vector3DF*)malloc(cnt * sizeof(Vector3DF));
-    if (srcForce != 0x0) { memcpy(sfForce, srcForce, nump * sizeof(Vector3DF)); free(srcForce); }
-
-    uint* srcCell = sfClusterCell;
-    sfClusterCell = (uint*)malloc(cnt * sizeof(uint));
-    if (srcCell != 0x0) { memcpy(sfClusterCell, srcCell, nump * sizeof(uint)); free(srcCell); }
-
-    uint* srcGCell = sfGridCell;
-    sfGridCell = (uint*)malloc(cnt * sizeof(uint));
-    if (srcGCell != 0x0) { memcpy(sfGridCell, srcGCell, nump * sizeof(uint)); free(srcGCell); }
-
-    uint* srcNext = sfGridNext;
-    sfGridNext = (uint*)malloc(cnt * sizeof(uint));
-    if (srcNext != 0x0) { memcpy(sfGridNext, srcNext, nump * sizeof(uint)); free(srcNext); }
-
-    uint* srcNbrNdx = sfNbrNdx;
-    sfNbrNdx = (uint*)malloc(cnt * sizeof(uint));
-    if (srcNbrNdx != 0x0) { memcpy(sfNbrNdx, srcNbrNdx, nump * sizeof(uint)); free(srcNbrNdx); }
-
-    uint* srcNbrCnt = sfNbrCnt;
-    sfNbrCnt = (uint*)malloc(cnt * sizeof(uint));
-    if (srcNbrCnt != 0x0) { memcpy(sfNbrCnt, srcNbrCnt, nump * sizeof(uint)); free(srcNbrCnt); }
-
-    m_Param[PSTAT_PMEM] = 68 * 2 * cnt;
-
-    sfMaxPoints = cnt;
 }
 
 
