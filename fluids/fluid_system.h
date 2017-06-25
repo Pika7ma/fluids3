@@ -115,9 +115,12 @@
 	#define PTIME_TOGPU			45
 	#define PTIME_FROMGPU		46
 	#define PFORCE_FREQ			47
-    #define SFNUM               48  // M: the param for # of surface particles
-    #define SFSTAT_PMEM         49  // M: the param for the start point of surface paritcles
- 	
+
+    // M: Surface particles attributes
+    // M: initialized in FluidSystem::SetupDefaultPrams()
+    #define SFMAX_PARAM         30
+    #define SFNUM               0
+    #define SFSMOOTHRADIUS      1
 
 	// Vector params
 	#define PVOLMIN				0
@@ -149,10 +152,10 @@
 
 	#define BFLUID				2
 
-	struct NList {
-		int num;
-		int first;
-	};
+	//struct NList {
+	//	int num;
+	//	int first;
+	//};
 	struct Fluid {						// offset - TOTAL: 72 (must be multiple of 12)
 		Vector3DF		pos;			// 0
 		Vector3DF		vel;			// 12
@@ -164,6 +167,7 @@
 		int				grid_next;		// 60
 		DWORD			clr;			// 64
 		int				padding;		// 68
+        
 	};
 
 	class FluidSystem {
@@ -171,149 +175,149 @@
 		FluidSystem ();
 		
 		// Rendering
-		void Draw ( Camera3D& cam, float rad );
-		void DrawDomain ();
-		void DrawGrid ();
-		void DrawText ();
-		void DrawCell ( int gx, int gy, int gz );
-		void DrawParticle ( int p, int r1, int r2, Vector3DF clr2 );
-		void DrawParticleInfo ()		{ DrawParticleInfo ( mSelected ); }
-		void DrawParticleInfo ( int p );
-		void DrawNeighbors ( int p );
-		void DrawCircle ( Vector3DF pos, float r, Vector3DF clr, Camera3D& cam );
+        void Draw(Camera3D& cam, float rad);
+        void DrawDomain();
+        void DrawGrid();
+        void DrawText();
+        void DrawCell(int gx, int gy, int gz);
+        void DrawParticle(int p, int r1, int r2, Vector3DF clr2);
+        void DrawParticleInfo() { DrawParticleInfo(mSelected); }
+        void DrawParticleInfo(int p);
+        void DrawNeighbors(int p);
+        void DrawCircle(Vector3DF pos, float r, Vector3DF clr, Camera3D& cam);
 
 		// Particle Utilities
-		void AllocateParticles ( int cnt );
-		int AddParticle ();
-		void AddEmit ( float spacing );
-		int NumPoints ()		{ return mNumPoints; }
+        void AllocateParticles(int cnt);
+        int AddParticle();
+        void AddEmit(float spacing);
+        int NumPoints() { return mNumPoints; }
 		
 
 		// Setup
-		void Setup ( bool bStart );
-		void SetupRender ();
-		void SetupKernels ();
-		void SetupDefaultParams ();
-		void SetupExampleParams ( bool bStart );
-		void SetupSpacing ();
-		void SetupAddVolume ( Vector3DF min, Vector3DF max, float spacing, float offs, int total );
-		void SetupGridAllocate ( Vector3DF min, Vector3DF max, float sim_scale, float cell_size, float border );
-		int ParseXML ( std::string name, int id, bool bStart );
+        void Setup(bool bStart);
+        void SetupRender();
+        void SetupKernels();
+        void SetupDefaultParams();
+        void SetupExampleParams(bool bStart);
+        void SetupSpacing();
+        void SetupAddVolume(Vector3DF min, Vector3DF max, float spacing, float offs, int total);
+        void SetupGridAllocate(Vector3DF min, Vector3DF max, float sim_scale, float cell_size, float border);
+        int ParseXML(std::string name, int id, bool bStart);
 
-		// Neighbor Search
-		void Search ();
-		void InsertParticles ();
-		void BasicSortParticles ();
-		void BinSortParticles ();
-		void FindNbrsSlow ();
-		void FindNbrsGrid ();
+        // Neighbor Search
+        void Search();
+        void InsertParticles();
+        void BasicSortParticles();
+        void BinSortParticles();
+        void FindNbrsSlow();
+        void FindNbrsGrid();
 
-		// Simulation
-		void Run (int w, int h);
-		void RunSearchCPU ();
-		void RunValidate ();
-		void RunSimulateCPUSlow ();
-		void RunSimulateCPUGrid ();
-		void RunSimulateCUDARadix ();
-		void RunSimulateCUDAIndex ();
-		void RunSimulateCUDAFull ();
-		void RunSimulateCUDACluster ();
-		void RunPlayback ();
-		
-		void Advance ();
-		void EmitParticles ();
-		void Exit ();
-		void TransferToCUDA ();
-		void TransferFromCUDA ();
-		void ValidateSortCUDA ();
-		double GetDT()		{ return m_DT; }
+        // Simulation
+        void Run(int w, int h);
+        void RunSearchCPU();
+        void RunValidate();
+        void RunSimulateCPUSlow();
+        void RunSimulateCPUGrid();
+        void RunSimulateCUDARadix();
+        void RunSimulateCUDAIndex();
+        void RunSimulateCUDAFull();
+        void RunSimulateCUDACluster();
+        void RunPlayback();
 
-		// Debugging
-		void SaveResults ();
-		void CaptureVideo (int width, int height);
-		void ValidateResults ();
-		void TestPrefixSum ( int num );
-		void DebugPrintMemory ();
-		void record ( int param, std::string, Time& start );
-		int SelectParticle ( int x, int y, int wx, int wy, Camera3D& cam );
-		int GetSelected ()		{ return mSelected; }
+        void Advance();
+        void EmitParticles();
+        void Exit();
+        void TransferToCUDA();
+        void TransferFromCUDA();
+        void ValidateSortCUDA();
+        double GetDT() { return m_DT; }
 
-		
-		// Acceleration Grid
-		int getGridCell ( int p, Vector3DI& gc );
-		int getGridCell ( Vector3DF& p, Vector3DI& gc );
-		int getGridTotal ()		{ return m_GridTotal; }
-		int getSearchCnt ()		{ return m_GridAdjCnt; }
-		Vector3DI getCell ( int gc );
-		Vector3DF GetGridRes ()		{ return m_GridRes; }
-		Vector3DF GetGridMin ()		{ return m_GridMin; }
-		Vector3DF GetGridMax ()		{ return m_GridMax; }
-		Vector3DF GetGridDelta ()	{ return m_GridDelta; }
+        // Debugging
+        void SaveResults();
+        void CaptureVideo(int width, int height);
+        void ValidateResults();
+        void TestPrefixSum(int num);
+        void DebugPrintMemory();
+        void record(int param, std::string, Time& start);
+        int SelectParticle(int x, int y, int wx, int wy, Camera3D& cam);
+        int GetSelected() { return mSelected; }
 
-		// Acceleration Neighbor Tables
-		void AllocateNeighborTable ();
-		void ClearNeighborTable ();
-		void ResetNeighbors ();
-		int GetNeighborTableSize ()	{ return m_NeighborNum; }
-		void ClearNeighbors ( int i );
-		int AddNeighbor();
-		int AddNeighbor( int i, int j, float d );
-		
-		// Smoothed Particle Hydrodynamics		
-		void ComputePressureGrid ();			// O(kn) - spatial grid
-		void ComputeForceGrid ();				// O(kn) - spatial grid
-		void ComputeForceGridNC ();				// O(cn) - neighbor table		
-		
 
-		// GPU Support functions
-		void AllocatePackBuf ();
-		void PackParticles ();
-		void UnpackParticles ();
+        // Acceleration Grid
+        int getGridCell(int p, Vector3DI& gc);
+        int getGridCell(Vector3DF& p, Vector3DI& gc);
+        int getGridTotal() { return m_GridTotal; }
+        int getSearchCnt() { return m_GridAdjCnt; }
+        Vector3DI getCell(int gc);
+        Vector3DF GetGridRes() { return m_GridRes; }
+        Vector3DF GetGridMin() { return m_GridMin; }
+        Vector3DF GetGridMax() { return m_GridMax; }
+        Vector3DF GetGridDelta() { return m_GridDelta; }
 
-		//void SPH_ComputePressureSlow ();			// O(n^2)	
-		//void SPH_ComputeForceSlow ();				// O(n^2)
-		//void SPH_ComputeForceGrid ();				// O(kn) - spatial grid
+        // Acceleration Neighbor Tables
+        void AllocateNeighborTable();
+        void ClearNeighborTable();
+        void ResetNeighbors();
+        int GetNeighborTableSize() { return m_NeighborNum; }
+        void ClearNeighbors(int i);
+        int AddNeighbor();
+        int AddNeighbor(int i, int j, float d);
 
-		// Recording
-		void StartRecord ();
-		void StartPlayback ( int p );
-		void Record ();
-		std::string getFilename ( int n );
-		int getLastRecording ();
-		int getMode ()		{ return m_Param[PMODE]; }
-		std::string getModeStr ();
-		void getModeClr ();
+        // Smoothed Particle Hydrodynamics		
+        void ComputePressureGrid();			// O(kn) - spatial grid
+        void ComputeForceGrid();				// O(kn) - spatial grid
+        void ComputeForceGridNC();				// O(cn) - neighbor table		
 
-		// Parameters			
-		void SetParam (int p, float v );
-		void SetParam (int p, int v )		{ m_Param[p] = (float) v; }
-		float GetParam ( int p )			{ return (float) m_Param[p]; }
-		float SetParam ( int p, float v, float mn, float mx )	{ m_Param[p] = v ; if ( m_Param[p] > mx ) m_Param[p] = mn; return m_Param[p];}
-		float IncParam ( int p, float v, float mn, float mx )	{ 
-			m_Param[p] += v; 
-			if ( m_Param[p] < mn ) m_Param[p] = mn; 
-			if ( m_Param[p] > mx ) m_Param[p] = mn; 
-			return m_Param[p];
-		}
-		Vector3DF GetVec ( int p )			{ return m_Vec[p]; }
-		void SetVec ( int p, Vector3DF v );
-		void Toggle ( int p )				{ m_Toggle[p] = !m_Toggle[p]; }		
-		bool GetToggle ( int p )			{ return m_Toggle[p]; }
-		std::string		getSceneName ()		{ return mSceneName; }
+
+        // GPU Support functions
+        void AllocatePackBuf();
+        void PackParticles();
+        void UnpackParticles();
+
+        //void SPH_ComputePressureSlow ();			// O(n^2)	
+        //void SPH_ComputeForceSlow ();				// O(n^2)
+        //void SPH_ComputeForceGrid ();				// O(kn) - spatial grid
+
+        // Recording
+        void StartRecord();
+        void StartPlayback(int p);
+        void Record();
+        std::string getFilename(int n);
+        int getLastRecording();
+        int getMode() { return m_Param[PMODE]; }
+        std::string getModeStr();
+        void getModeClr();
+
+        // Parameters			
+        void SetParam(int p, float v);
+        void SetParam(int p, int v) { m_Param[p] = (float)v; }
+        float GetParam(int p) { return (float)m_Param[p]; }
+        float SetParam(int p, float v, float mn, float mx) { m_Param[p] = v; if (m_Param[p] > mx) m_Param[p] = mn; return m_Param[p]; }
+        float IncParam(int p, float v, float mn, float mx) {
+            m_Param[p] += v;
+            if (m_Param[p] < mn) m_Param[p] = mn;
+            if (m_Param[p] > mx) m_Param[p] = mn;
+            return m_Param[p];
+        }
+        Vector3DF GetVec(int p) { return m_Vec[p]; }
+        void SetVec(int p, Vector3DF v);
+        void Toggle(int p) { m_Toggle[p] = !m_Toggle[p]; }
+        bool GetToggle(int p) { return m_Toggle[p]; }
+        std::string	getSceneName() { return mSceneName; }
 		
 	private:
 
 		std::string				mSceneName;
 
 		// Time
-		int							m_Frame;		
-		double						m_DT;
-		double						m_Time;	
+		int						m_Frame;		
+		double					m_DT;
+		double					m_Time;	
 
 		// Simulation Parameters
-		double						m_Param [ MAX_PARAM ];			// see defines above
-		Vector3DF					m_Vec [ MAX_PARAM ];
-		bool						m_Toggle [ MAX_PARAM ];
+		double					m_Param [ MAX_PARAM ];			// see defines above
+		Vector3DF				m_Vec [ MAX_PARAM ];
+		bool					m_Toggle [ MAX_PARAM ];
 
 		// SPH Kernel functions
 		double					m_R2, m_Poly6Kern, m_LapKern, m_SpikyKern;		
@@ -367,11 +371,30 @@
 		int						m_GridAdjCnt;
 		int						m_GridAdj[216];
 
+        // M: Acceleration Grid of surface particles
+        uint*					sf_Grid;
+        uint*					sf_GridCnt;
+        int						sf_GridTotal;			// total # cells
+        Vector3DI				sf_GridRes;				// resolution in each axis
+        Vector3DF				sf_GridMin;				// volume of grid (may not match domain volume exactly)
+        Vector3DF				sf_GridMax;
+        Vector3DF				sf_GridSize;				// physical size in each axis
+        Vector3DF				sf_GridDelta;
+        int						sf_GridSrch;
+        int						sf_GridAdjCnt;
+        int						sf_GridAdj[216];
+
 		// Acceleration Neighbor Table
 		int						m_NeighborNum;
 		int						m_NeighborMax;
 		int*					m_NeighborTable;
 		float*					m_NeighborDist;
+
+        // M: Acceleration Neighbor Table of surface particles
+        int						sf_NeighborNum;
+        int						sf_NeighborMax;
+        int*					sf_NeighborTable;
+        float*					sf_NeighborDist;
 
 		char*					mPackBuf;
 		int*					mPackGrid;

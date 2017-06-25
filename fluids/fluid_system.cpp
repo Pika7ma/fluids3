@@ -96,7 +96,6 @@ FluidSystem::FluidSystem ()
 	m_Param [ PEXAMPLE ]	    = 1;
 	m_Param [ PGRID_DENSITY ]   = 2.0;
 	m_Param [ PNUM ]		    = 65536 * 128;
-    m_Param [ SFNUM ]           = 65536 * 128;
 
 
 	m_Toggle [ PDEBUG ]		=	false;
@@ -123,6 +122,7 @@ void FluidSystem::Setup(bool bStart)
 
     ClearNeighborTable();
     mNumPoints = 0;
+    sfNumPoints = 0;
 
     SetupDefaultParams();
 
@@ -259,7 +259,7 @@ void FluidSystem::AllocateParticles ( int cnt )
 	mNbrCnt = (uint*)		malloc ( cnt*sizeof(uint) );
 	if ( srcNbrCnt != 0x0 )	{ memcpy ( mNbrCnt, srcNbrCnt, nump *sizeof(uint)); free ( srcNbrCnt ); }
 
-	m_Param[SFSTAT_PMEM] = 68 * 2 * cnt;
+	m_Param[PSTAT_PMEM] = 68 * 2 * cnt;
 
 	mMaxPoints = cnt;
 }
@@ -377,7 +377,7 @@ void FluidSystem::record ( int param, std::string name, Time& start )
 
 }
 
-
+// M: useless (CPU code)
 void FluidSystem::RunSearchCPU ()
 {
 	Time start;
@@ -679,69 +679,69 @@ void FluidSystem::AllocatePackBuf ()
 }
 
 //------- NOT CURRENTLY USED
-void FluidSystem::PackParticles ()
-{
-	// Bin particles in memory according to grid cells.
-	// This is equivalent to a partial bucket sort, as a GPU radix sort is not necessary.
-
-	int j;	
-	char* dat = mPackBuf;
-	int cnt = 0;
-
-	for (int c=0; c < m_GridTotal; c++) {
-		j = m_Grid[c];
-		mPackGrid[c] = cnt;
-		while ( j != -1 ) {
-			*(Vector3DF*) dat = *(mPos+j);			dat += sizeof(Vector3DF);
-			*(Vector3DF*) dat = *(mVel+j);			dat += sizeof(Vector3DF);
-			*(Vector3DF*) dat = *(mVelEval+j);		dat += sizeof(Vector3DF);
-			*(Vector3DF*) dat = *(mForce+j);		dat += sizeof(Vector3DF);
-			*(float*) dat =		*(mPressure+j);		dat += sizeof(float);
-			*(float*) dat =		*(mDensity+j);		dat += sizeof(float);
-			*(int*) dat =		*(mClusterCell+j);	dat += sizeof(int);					// search cell
-			*(int*) dat =		c;					dat += sizeof(int);					// container cell
-			*(DWORD*) dat =		*(mClr+j);			dat += sizeof(DWORD);
-			dat += sizeof(int);
-			j = *(mGridNext+j);
-			cnt++;
-		}
-	}
-	mGoodPoints = cnt;
-
-	//--- Debugging - Print packed particles
-	/*printf ( "\nPACKED\n" );
-	for (int n=cnt-30; n < cnt; n++ ) {
-		dat = mPackBuf + n*sizeof(Fluid);
-		printf ( " %d: %d, %d\n", n, *((int*) (dat+56)), *((int*) (dat+60)) );
-	}*/	
-}
+//void FluidSystem::PackParticles ()
+//{
+//	// Bin particles in memory according to grid cells.
+//	// This is equivalent to a partial bucket sort, as a GPU radix sort is not necessary.
+//
+//	int j;	
+//	char* dat = mPackBuf;
+//	int cnt = 0;
+//
+//	for (int c=0; c < m_GridTotal; c++) {
+//		j = m_Grid[c];
+//		mPackGrid[c] = cnt;
+//		while ( j != -1 ) {
+//			*(Vector3DF*) dat = *(mPos+j);			dat += sizeof(Vector3DF);
+//			*(Vector3DF*) dat = *(mVel+j);			dat += sizeof(Vector3DF);
+//			*(Vector3DF*) dat = *(mVelEval+j);		dat += sizeof(Vector3DF);
+//			*(Vector3DF*) dat = *(mForce+j);		dat += sizeof(Vector3DF);
+//			*(float*) dat =		*(mPressure+j);		dat += sizeof(float);
+//			*(float*) dat =		*(mDensity+j);		dat += sizeof(float);
+//			*(int*) dat =		*(mClusterCell+j);	dat += sizeof(int);					// search cell
+//			*(int*) dat =		c;					dat += sizeof(int);					// container cell
+//			*(DWORD*) dat =		*(mClr+j);			dat += sizeof(DWORD);
+//			dat += sizeof(int);
+//			j = *(mGridNext+j);
+//			cnt++;
+//		}
+//	}
+//	mGoodPoints = cnt;
+//
+//	//--- Debugging - Print packed particles
+//	/*printf ( "\nPACKED\n" );
+//	for (int n=cnt-30; n < cnt; n++ ) {
+//		dat = mPackBuf + n*sizeof(Fluid);
+//		printf ( " %d: %d, %d\n", n, *((int*) (dat+56)), *((int*) (dat+60)) );
+//	}*/	
+//}
 
 //------- NOT CURRENTLY USED
-void FluidSystem::UnpackParticles ()
-{
-	char* dat = mPackBuf;
-
-	Vector3DF*  ppos =		mPos;
-	Vector3DF*  pforce =	mForce;
-	Vector3DF*  pvel =		mVel;
-	Vector3DF*  pveleval =	mVelEval;
-	float*		ppress =	mPressure;
-	float*		pdens =		mDensity;
-	DWORD*		pclr =		mClr;
-
-	for (int n=0; n < mGoodPoints; n++ ) {
-		*ppos++ =		*(Vector3DF*) dat;		dat += sizeof(Vector3DF);
-		*pvel++ =		*(Vector3DF*) dat;		dat += sizeof(Vector3DF);
-		*pveleval++ =	*(Vector3DF*) dat;		dat += sizeof(Vector3DF);
-		*pforce++ =		*(Vector3DF*) dat;		dat += sizeof(Vector3DF);
-		*ppress++ =		*(float*) dat;			dat += sizeof(float);
-		*pdens++ =		*(float*) dat;			dat += sizeof(float);		
-		dat += sizeof(int);
-		dat += sizeof(int);
-		*pclr++ =		*(DWORD*) dat;			dat += sizeof(DWORD);
-		dat += sizeof(int);
-	}
-}
+//void FluidSystem::UnpackParticles ()
+//{
+//	char* dat = mPackBuf;
+//
+//	Vector3DF*  ppos =		mPos;
+//	Vector3DF*  pforce =	mForce;
+//	Vector3DF*  pvel =		mVel;
+//	Vector3DF*  pveleval =	mVelEval;
+//	float*		ppress =	mPressure;
+//	float*		pdens =		mDensity;
+//	DWORD*		pclr =		mClr;
+//
+//	for (int n=0; n < mGoodPoints; n++ ) {
+//		*ppos++ =		*(Vector3DF*) dat;		dat += sizeof(Vector3DF);
+//		*pvel++ =		*(Vector3DF*) dat;		dat += sizeof(Vector3DF);
+//		*pveleval++ =	*(Vector3DF*) dat;		dat += sizeof(Vector3DF);
+//		*pforce++ =		*(Vector3DF*) dat;		dat += sizeof(Vector3DF);
+//		*ppress++ =		*(float*) dat;			dat += sizeof(float);
+//		*pdens++ =		*(float*) dat;			dat += sizeof(float);		
+//		dat += sizeof(int);
+//		dat += sizeof(int);
+//		*pclr++ =		*(DWORD*) dat;			dat += sizeof(DWORD);
+//		dat += sizeof(int);
+//	}
+//}
 
 void FluidSystem::DebugPrintMemory ()
 {
@@ -982,17 +982,26 @@ void FluidSystem::Advance ()
 
 void FluidSystem::ClearNeighborTable ()
 {
-	if ( m_NeighborTable != 0x0 )	free (m_NeighborTable);
-	if ( m_NeighborDist != 0x0)		free (m_NeighborDist );
-	m_NeighborTable = 0x0;
-	m_NeighborDist = 0x0;
-	m_NeighborNum = 0;
-	m_NeighborMax = 0;
+    if (m_NeighborTable != 0x0) { free(m_NeighborTable); }
+    if (m_NeighborDist != 0x0) { free(m_NeighborDist); }
+    m_NeighborTable = 0x0;
+    m_NeighborDist = 0x0;
+    m_NeighborNum = 0;
+    m_NeighborMax = 0;
+
+    // M: clear neighbor table for surface particles
+    if (sf_NeighborTable != 0x0) { free(sf_NeighborTable); }
+    if (sf_NeighborDist != 0x0) { free(sf_NeighborDist); }
+    sf_NeighborTable = 0x0;
+    sf_NeighborDist = 0x0;
+    sf_NeighborNum = 0;
+    sf_NeighborMax = 0;
 }
 
 void FluidSystem::ResetNeighbors ()
 {
 	m_NeighborNum = 0;
+    sf_NeighborNum = 0;
 }
 
 // Allocate new neighbor tables, saving previous data
@@ -1022,6 +1031,7 @@ void FluidSystem::ClearNeighbors ( int i )
 	*(mNbrCnt+i) = 0;
 }
 
+// M: useless (CPU code)
 int FluidSystem::AddNeighbor( int i, int j, float d )
 {
 	int k = AddNeighbor();
@@ -1262,6 +1272,7 @@ void FluidSystem::FindNbrsSlow ()
 	}
 }
 
+// M: useless (CPU code)
 void FluidSystem::FindNbrsGrid ()
 {
 	// O(n^2)
@@ -2244,27 +2255,27 @@ void FluidSystem::SetupDefaultParams ()
 	m_Param [ PMAX_FRAC ] = 1.0;
 	m_Param [ PPOINT_GRAV_AMT ] = 0.0;
 
-	m_Param [ PGROUND_SLOPE ] = 0.0;
-	m_Param [ PFORCE_MIN ] = 0.0;
-	m_Param [ PFORCE_MAX ] = 0.0;	
-	m_Param [ PFORCE_FREQ ] = 8.0;	
-	m_Toggle [ PWRAP_X ] = false;
-	m_Toggle [ PWALL_BARRIER ] = false;
-	m_Toggle [ PLEVY_BARRIER ] = false;
-	m_Toggle [ PDRAIN_BARRIER ] = false;
+    m_Param[PGROUND_SLOPE]      = 0.0;
+    m_Param[PFORCE_MIN]         = 0.0;
+    m_Param[PFORCE_MAX]         = 0.0;
+    m_Param[PFORCE_FREQ]        = 8.0;
+    m_Toggle[PWRAP_X]           = false;
+    m_Toggle[PWALL_BARRIER]     = false;
+    m_Toggle[PLEVY_BARRIER]     = false;
+    m_Toggle[PDRAIN_BARRIER]    = false;
 
-	m_Param [ PSTAT_NBRMAX ] = 0 ;
-	m_Param [ PSTAT_SRCHMAX ] = 0 ;
-	
-	m_Vec [ PPOINT_GRAV_POS ].Set ( 0, 50, 0 );
-	m_Vec [ PPLANE_GRAV_DIR ].Set ( 0, -9.8, 0 );
-	m_Vec [ PEMIT_POS ].Set ( 0, 0, 0 );
-	m_Vec [ PEMIT_RATE ].Set ( 0, 0, 0 );
-	m_Vec [ PEMIT_ANG ].Set ( 0, 90, 1.0 );
-	m_Vec [ PEMIT_DANG ].Set ( 0, 0, 0 );
+    m_Param[PSTAT_NBRMAX] = 0;
+    m_Param[PSTAT_SRCHMAX] = 0;
 
-	// Default sim config
-	m_Toggle [ PRUN ] = true;				// Run integrator
+    m_Vec[PPOINT_GRAV_POS].Set(0, 50, 0);
+    m_Vec[PPLANE_GRAV_DIR].Set(0, -9.8, 0);
+    m_Vec[PEMIT_POS].Set(0, 0, 0);
+    m_Vec[PEMIT_RATE].Set(0, 0, 0);
+    m_Vec[PEMIT_ANG].Set(0, 90, 1.0);
+    m_Vec[PEMIT_DANG].Set(0, 0, 0);
+
+    // Default sim config
+    m_Toggle[PRUN]      = true;				// Run integrator
 	m_Param [PGRIDSIZE] = m_Param[PSMOOTHRADIUS] * 2;
 	m_Param [PDRAWMODE] = 1;				// Sprite drawing
 	m_Param [PDRAWGRID] = 0;				// No grid 

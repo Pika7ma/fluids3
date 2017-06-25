@@ -259,12 +259,6 @@ void display ()
     if (guiChanged(3)) 	psys.SetVec(PPLANE_GRAV_DIR, Vector3DF(0, -gravity, 0));
     if (guiChanged(4)) 	psys.SetParam(PVISC, visc);
     if (guiChanged(5)) 	psys.SetParam(PRESTDENSITY, restdens);
-
-    // M: modify # of surface particle
-    if (guiChanged(6)) {
-        psys.SetParam(SFNUM, psys_count_sf, 4, 40000000);
-        psys.Setup(false);
-    }
 	
 
 	// Do simulation!
@@ -552,52 +546,52 @@ void idle_func ()
 
 void init ()
 {
+
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+
+    srand(time(0x0));
+
+    glClearColor(0.49, 0.49, 0.49, 1.0);
+    glShadeModel(GL_SMOOTH);
+
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthMask(1);
+    glEnable(GL_TEXTURE_2D);
+
+
+    // glutSetCursor ( GLUT_CURSOR_NONE );
+
+    // Initialize camera
+    cam.setOrbit(Vector3DF(200, 30, 0), Vector3DF(2, 2, 2), 400, 400);
+    cam.setFov(35);
+    cam.updateMatricies();
 	
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);	
-	glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);	
+	light[0].x = 0;		light[0].y = 200;	light[0].z = 0;     light[0].w = 1;
+	light_to[0].x = 0;	light_to[0].y = 0;	light_to[0].z = 0;  light_to[0].w = 1;
 
-	srand ( time ( 0x0 ) );
-
-	glClearColor( 0.49, 0.49, 0.49, 1.0 );
-	glShadeModel( GL_SMOOTH );
-
-	glEnable ( GL_COLOR_MATERIAL );
-	glEnable (GL_DEPTH_TEST);  
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-	glDepthMask ( 1 );
-	glEnable ( GL_TEXTURE_2D );
-
-
-	// glutSetCursor ( GLUT_CURSOR_NONE );
-	
-	// Initialize camera
-	cam.setOrbit ( Vector3DF(200,30,0), Vector3DF(2,2,2), 400, 400 );
-	cam.setFov ( 35 );
-	cam.updateMatricies ();
-	
-	light[0].x = 0;		light[0].y = 200;	light[0].z = 0; light[0].w = 1;
-	light_to[0].x = 0;	light_to[0].y = 0;	light_to[0].z = 0; light_to[0].w = 1;
-
-	light[1].x = 55;		light[1].y = 140;	light[1].z = 50;	light[1].w = 1;
-	light_to[1].x = 0;	light_to[1].y = 0;	light_to[1].z = 0;		light_to[1].w = 1;
+	light[1].x = 55;	light[1].y = 140;	light[1].z = 50;	light[1].w = 1;
+	light_to[1].x = 0;	light_to[1].y = 0;	light_to[1].z = 0;	light_to[1].w = 1;
 
 	light_fov = 45;
 
 	obj_from.x = 0;		obj_from.y = 0;		obj_from.z = 20;		// emitter
 	obj_angs.x = 118.7;	obj_angs.y = 200;	obj_angs.z = 1.0;
-	obj_dang.x = 1;	obj_dang.y = 1;		obj_dang.z = 0;
+	obj_dang.x = 1;	    obj_dang.y = 1;		obj_dang.z = 0;
 
-	psys.Setup (true);
-	psys.SetVec ( PEMIT_ANG, Vector3DF ( obj_angs.x, obj_angs.y, obj_angs.z ) );
-	psys.SetVec ( PEMIT_POS, Vector3DF ( obj_from.x, obj_from.y, obj_from.z ) );
+    psys.Setup(true);
+    psys.SetVec(PEMIT_ANG, Vector3DF(obj_angs.x, obj_angs.y, obj_angs.z));
+    psys.SetVec(PEMIT_POS, Vector3DF(obj_from.x, obj_from.y, obj_from.z));
 
-	psys.SetParam ( PCLR_MODE, iClrMode );	
+    psys.SetParam(PCLR_MODE, iClrMode);
 
-	psys_playback = psys.getLastRecording ();
+    psys_playback = psys.getLastRecording();
 	
-	// Get initial number of particle (from scene XML)
-	psys_count = psys.GetParam ( PNUM );
+    // Get initial number of particle (from scene XML)
+    psys_count = psys.GetParam(PNUM);
 }
 
 
@@ -605,26 +599,26 @@ void initialize ()
 {
 	#ifdef BUILD_CUDA
 		// Initialize CUDA
-		cudaInit ();
+		cudaInit();
 	#endif
 
-	PERF_INIT ( true );
-	PERF_SET ( true, 0, true, "" );
-		
+    PERF_INIT(true);
+    PERF_SET(true, 0, true, "");
+
 	addGui (  20,   20, 200, 12, "Frame Time - FPS ",	    GUI_PRINT,  GUI_INT,	&frameFPS,      0,      0 );					
 	addGui (  20,   35, 200, 12, "Frame Time - msec ",	    GUI_PRINT,  GUI_FLOAT,	&frameTime,     0,      0 );							
 	addGui (  20,   50, 200, 27, "# of Particles",		    GUI_SLIDER, GUI_INTLOG,	&psys_count,    1024,   8000000 );
 	addGui (  20,   80, 200, 27, "Gravity",				    GUI_SLIDER, GUI_FLOAT,	&gravity,       0,      20.0 );
 	addGui (  20,  110, 200, 27, "Viscosity",			    GUI_SLIDER, GUI_FLOAT,	&visc,          0,      1 );
 	addGui (  20,  140, 200, 27, "Rest Density",			GUI_SLIDER, GUI_FLOAT,	&restdens,      0,      1000.0 );
-    addGui (  20,  170, 200, 27, "# of Surface Particles",  GUI_SLIDER, GUI_INTLOG, &psys_count_sf, 1024,   8000000);
+    //addGui (  20,  170, 200, 27, "# of Surface Particles",  GUI_SLIDER, GUI_INTLOG, &psys_count_sf, 1024,   8000000);
 		
-	init2D ( "arial_12" );		// specify font file (.bin/tga)
-	setText ( 1.0, -0.5 );		// scale by 0.5, kerning adjust -0.5 pixels
-	setview2D ( window_width, window_height );
-	setorder2D ( true, -0.001 );
-	
-	init();	
+    init2D("arial_12");		// specify font file (.bin/tga)
+    setText(1.0, -0.5);		// scale by 0.5, kerning adjust -0.5 pixels
+    setview2D(window_width, window_height);
+    setorder2D(true, -0.001);
+
+    init();
 	
 	psys.SetupRender ();
 
