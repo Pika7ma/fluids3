@@ -185,18 +185,18 @@ void FluidClearCUDA ()
 
 void FluidSetupCUDA ( int num, int gsrch, int3 res, float3 size, float3 delta, float3 gmin, float3 gmax, int total, int chk )
 {	
-	fcuda.pnum = num;	
-	fcuda.gridRes = res;
-	fcuda.gridSize = size;
-	fcuda.gridDelta = delta;
-	fcuda.gridMin = gmin;
-	fcuda.gridMax = gmax;
-	fcuda.gridTotal = total;
-	fcuda.gridSrch = gsrch;
-	fcuda.gridAdjCnt = gsrch*gsrch*gsrch;
-	fcuda.gridScanMax = res;
-	fcuda.gridScanMax -= make_int3( fcuda.gridSrch, fcuda.gridSrch, fcuda.gridSrch );
-	fcuda.chk = chk;
+	fcuda.pnum          = num;	
+	fcuda.gridRes       = res;
+	fcuda.gridSize      = size;
+	fcuda.gridDelta     = delta;
+	fcuda.gridMin       = gmin;
+	fcuda.gridMax       = gmax;
+	fcuda.gridTotal     = total;
+	fcuda.gridSrch      = gsrch;
+	fcuda.gridAdjCnt    = gsrch*gsrch*gsrch;
+	fcuda.gridScanMax   = res;
+	fcuda.gridScanMax  -= make_int3( fcuda.gridSrch, fcuda.gridSrch, fcuda.gridSrch );
+	fcuda.chk           = chk;
 
 	// Build Adjacency Lookup
     int cell = 0;
@@ -226,10 +226,10 @@ void FluidSetupCUDA ( int num, int gsrch, int3 res, float3 size, float3 delta, f
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.mpos,		fcuda.szPnts*sizeof(float)*3 ),	"Malloc mpos" );	
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.mvel,		fcuda.szPnts*sizeof(float)*3 ),	"Malloc mvel" );	
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.mveleval,	fcuda.szPnts*sizeof(float)*3 ),	"Malloc mveleval" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mforce,	fcuda.szPnts*sizeof(float)*3 ),		"Malloc mforce" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mpress,	fcuda.szPnts*sizeof(float) ),		"Malloc mpress" );	
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mforce,	    fcuda.szPnts*sizeof(float)*3 ),	"Malloc mforce" );	
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mpress,	    fcuda.szPnts*sizeof(float) ),	"Malloc mpress" );	
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.mdensity,	fcuda.szPnts*sizeof(float) ),	"Malloc mdensity" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgcell,	fcuda.szPnts*sizeof(uint) ),		"Malloc mgcell" );	
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgcell,	    fcuda.szPnts*sizeof(uint) ),	"Malloc mgcell" );	
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgndx,		fcuda.szPnts*sizeof(uint)),		"Malloc mgndx" );	
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.mclr,		fcuda.szPnts*sizeof(uint) ),	"Malloc mclr" );	
 	//cudaCheck ( cudaMalloc ( (void**) &fbuf.mcluster,	fcuda.szPnts*sizeof(uint) ) );	
@@ -239,10 +239,10 @@ void FluidSetupCUDA ( int num, int gsrch, int3 res, float3 size, float3 delta, f
 
 	// Allocate grid
 	fcuda.szGrid = (fcuda.gridBlocks * fcuda.gridThreads);  
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgrid,		fcuda.szPnts*sizeof(int) ),		"Malloc mgrid" );
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridcnt,	fcuda.szGrid*sizeof(int) ),		"Malloc mgridcnt" );
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridoff,	fcuda.szGrid*sizeof(int) ),		"Malloc mgridoff" );
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridactive, fcuda.szGrid*sizeof(int) ),	"Malloc mgridactive" );
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgrid,		    fcuda.szPnts*sizeof(int) ),	"Malloc mgrid" );
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridcnt,	    fcuda.szGrid*sizeof(int) ),	"Malloc mgridcnt" );
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridoff,	    fcuda.szGrid*sizeof(int) ),	"Malloc mgridoff" );
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridactive,    fcuda.szGrid*sizeof(int) ),	"Malloc mgridactive" );
 		
 	// Transfer sim params to device
 	updateSimParams ( &fcuda );

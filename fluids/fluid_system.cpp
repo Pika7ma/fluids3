@@ -92,10 +92,11 @@ FluidSystem::FluidSystem ()
 	m_NeighborTable    = 0x0;
 	m_NeighborDist     = 0x0;
 	
-	m_Param [ PMODE ]		    = RUN_CUDA_FULL;
-	m_Param [ PEXAMPLE ]	    = 1;
-	m_Param [ PGRID_DENSITY ]   = 2.0;
-	m_Param [ PNUM ]		    = 65536 * 128;
+    m_Param[PMODE]          = RUN_CUDA_FULL;
+    m_Param[PEXAMPLE]       = 1;
+    m_Param[PGRID_DENSITY]  = 2.0;
+    m_Param[SFGRID_DENSITY] = 2.0;
+    m_Param[PNUM]           = 65536 * 128;
 
 
 	m_Toggle [ PDEBUG ]		=	false;
@@ -130,9 +131,13 @@ void FluidSystem::Setup(bool bStart)
 
     m_Param[PGRIDSIZE] = 2 * m_Param[PSMOOTHRADIUS] / m_Param[PGRID_DENSITY];
 
+    m_Param[SFGRIDSIZE] = 2 * m_Param[SFSMOOTHRADIUS] / m_Param[SFGRID_DENSITY];
+
     AllocateParticles(m_Param[PNUM]);
 
-    AllocatePackBuf();
+    AllocateSurfaceParticles(m_Param[SFNUM]);
+
+    //AllocatePackBuf(); // M: useless
 
     SetupKernels();
 
@@ -146,11 +151,11 @@ void FluidSystem::Setup(bool bStart)
 
         FluidClearCUDA();
 
-        Sleep(500);
+        //Sleep(500);
 
         FluidSetupCUDA(NumPoints(), m_GridSrch, *(int3*)& m_GridRes, *(float3*)& m_GridSize, *(float3*)& m_GridDelta, *(float3*)& m_GridMin, *(float3*)& m_GridMax, m_GridTotal, (int)m_Vec[PEMIT_RATE].x);
 
-        Sleep(500);
+        //Sleep(500);
 
         Vector3DF grav = m_Vec[PPLANE_GRAV_DIR];
         FluidParamCUDA(m_Param[PSIMSCALE], m_Param[PSMOOTHRADIUS], m_Param[PRADIUS], m_Param[PMASS], m_Param[PRESTDENSITY], *(float3*)& m_Vec[PBOUNDMIN], *(float3*)& m_Vec[PBOUNDMAX], m_Param[PEXTSTIFF], m_Param[PINTSTIFF], m_Param[PVISC], m_Param[PEXTDAMP], m_Param[PFORCE_MIN], m_Param[PFORCE_MAX], m_Param[PFORCE_FREQ], m_Param[PGROUND_SLOPE], grav.x, grav.y, grav.z, m_Param[PACCEL_LIMIT], m_Param[PVEL_LIMIT]);
@@ -199,6 +204,65 @@ void FluidSystem::Exit ()
 	cudaExit ();
 
 
+}
+
+// M: Allocate particle memory for surface particles
+void FluidSystem::AllocateSurfaceParticles(int cnt) {
+    int nump = 0;		// number to copy from previous data
+
+    Vector3DF* srcPos = sfPos;
+    sfPos = (Vector3DF*)malloc(cnt * sizeof(Vector3DF));
+    if (srcPos != 0x0) { memcpy(sfPos, srcPos, nump * sizeof(Vector3DF)); free(srcPos); }
+
+    DWORD* srcClr = sfClr;
+    sfClr = (DWORD*)malloc(cnt * sizeof(DWORD));
+    if (srcClr != 0x0) { memcpy(sfClr, srcClr, nump * sizeof(DWORD)); free(srcClr); }
+
+    Vector3DF* srcVel = sfVel;
+    sfVel = (Vector3DF*)malloc(cnt * sizeof(Vector3DF));
+    if (srcVel != 0x0) { memcpy(sfVel, srcVel, nump * sizeof(Vector3DF)); free(srcVel); }
+
+    Vector3DF* srcVelEval = sfVelEval;
+    sfVelEval = (Vector3DF*)malloc(cnt * sizeof(Vector3DF));
+    if (srcVelEval != 0x0) { memcpy(sfVelEval, srcVelEval, nump * sizeof(Vector3DF)); free(srcVelEval); }
+
+    unsigned short* srcAge = sfAge;
+    sfAge = (unsigned short*)malloc(cnt * sizeof(unsigned short));
+    if (srcAge != 0x0) { memcpy(sfAge, srcAge, nump * sizeof(unsigned short)); free(srcAge); }
+
+    float* srcPress = sfPressure;
+    sfPressure = (float*)malloc(cnt * sizeof(float));
+    if (srcPress != 0x0) { memcpy(sfPressure, srcPress, nump * sizeof(float)); free(srcPress); }
+
+    float* srcDensity = sfDensity;
+    sfDensity = (float*)malloc(cnt * sizeof(float));
+    if (srcDensity != 0x0) { memcpy(sfDensity, srcDensity, nump * sizeof(float)); free(srcDensity); }
+
+    Vector3DF* srcForce = sfForce;
+    sfForce = (Vector3DF*)malloc(cnt * sizeof(Vector3DF));
+    if (srcForce != 0x0) { memcpy(sfForce, srcForce, nump * sizeof(Vector3DF)); free(srcForce); }
+
+    uint* srcCell = sfClusterCell;
+    sfClusterCell = (uint*)malloc(cnt * sizeof(uint));
+    if (srcCell != 0x0) { memcpy(sfClusterCell, srcCell, nump * sizeof(uint)); free(srcCell); }
+
+    uint* srcGCell = sfGridCell;
+    sfGridCell = (uint*)malloc(cnt * sizeof(uint));
+    if (srcGCell != 0x0) { memcpy(sfGridCell, srcGCell, nump * sizeof(uint)); free(srcGCell); }
+
+    uint* srcNext = sfGridNext;
+    sfGridNext = (uint*)malloc(cnt * sizeof(uint));
+    if (srcNext != 0x0) { memcpy(sfGridNext, srcNext, nump * sizeof(uint)); free(srcNext); }
+
+    uint* srcNbrNdx = sfNbrNdx;
+    sfNbrNdx = (uint*)malloc(cnt * sizeof(uint));
+    if (srcNbrNdx != 0x0) { memcpy(sfNbrNdx, srcNbrNdx, nump * sizeof(uint)); free(srcNbrNdx); }
+
+    uint* srcNbrCnt = sfNbrCnt;
+    sfNbrCnt = (uint*)malloc(cnt * sizeof(uint));
+    if (srcNbrCnt != 0x0) { memcpy(sfNbrCnt, srcNbrCnt, nump * sizeof(uint)); free(srcNbrCnt); }
+
+    sfMaxPoints = cnt;
 }
 
 
@@ -259,7 +323,7 @@ void FluidSystem::AllocateParticles ( int cnt )
 	mNbrCnt = (uint*)		malloc ( cnt*sizeof(uint) );
 	if ( srcNbrCnt != 0x0 )	{ memcpy ( mNbrCnt, srcNbrCnt, nump *sizeof(uint)); free ( srcNbrCnt ); }
 
-	m_Param[PSTAT_PMEM] = 68 * 2 * cnt;
+    m_Param[PSTAT_PMEM] = 68 * 2 * cnt; // M: useless seemingly
 
 	mMaxPoints = cnt;
 }
@@ -299,20 +363,20 @@ void FluidSystem::SetupAddVolume ( Vector3DF min, Vector3DF max, float spacing, 
 	dz = max.z-min.z;
 
 	for (y = min.y; y <= max.y; y += spacing ) {	
-		for (int xz=0; xz < cnt; xz++ ) {
+		for (int xz = 0; xz < cnt; xz++ ) {
 			
-			x = min.x + (xz % int(cntx))*spacing;
-			z = min.z + (xz / int(cntx))*spacing;
+            x = min.x + (xz % int(cntx)) * spacing;
+            z = min.z + (xz / int(cntx)) * spacing;
 			p = AddParticle ();
 			if ( p != -1 ) {
                 // M: set position for new point
 				(mPos+p)->Set ( x,y,z);
 
                 // M: assign color for new point
-				Vector3DF clr ( (x-min.x)/dx, (y-min.y)/dy, (z-min.z)/dz );
-				clr *= 0.8;
-				clr += 0.2;		
-                *(mClr+p) = COLORA( clr.x, clr.y, clr.z, 1); 
+                Vector3DF clr((x - min.x) / dx, (y - min.y) / dy, (z - min.z) / dz);
+                clr *= 0.8;
+                clr += 0.2;
+                *(mClr + p) = COLORA(clr.x, clr.y, clr.z, 1);
                 //*(mClr + p) = COLORA(1, 1, 1, 1);
 				//*(mClr+p) = COLORA( 0.25, +0.25 + (y-min.y)*.75/dy, 0.25 + (z-min.z)*.75/dz, 1);  // (x-min.x)/dx
 			}
@@ -348,22 +412,22 @@ void FluidSystem::AddEmit ( float spacing )
 	float rnd = m_Vec[PEMIT_RATE].y * 0.15;	
 	int x = (int) sqrt(m_Vec[PEMIT_RATE].y);
 
-	for ( int n = 0; n < m_Vec[PEMIT_RATE].y; n++ ) {
-		ang_rand = (float(rand()*2.0/RAND_MAX) - 1.0) * m_Vec[PEMIT_SPREAD].x;
-		tilt_rand = (float(rand()*2.0/RAND_MAX) - 1.0) * m_Vec[PEMIT_SPREAD].y;
-		dir.x = cos ( ( m_Vec[PEMIT_ANG].x + ang_rand) * DEGtoRAD ) * sin( ( m_Vec[PEMIT_ANG].y + tilt_rand) * DEGtoRAD ) * m_Vec[PEMIT_ANG].z;
-		dir.y = sin ( ( m_Vec[PEMIT_ANG].x + ang_rand) * DEGtoRAD ) * sin( ( m_Vec[PEMIT_ANG].y + tilt_rand) * DEGtoRAD ) * m_Vec[PEMIT_ANG].z;
-		dir.z = cos ( ( m_Vec[PEMIT_ANG].y + tilt_rand) * DEGtoRAD ) * m_Vec[PEMIT_ANG].z;
-		pos = m_Vec[PEMIT_POS];
-		pos.x += spacing * (n/x);
-		pos.y += spacing * (n%x);
+    for (int n = 0; n < m_Vec[PEMIT_RATE].y; n++) {
+        ang_rand = (float(rand() * 2.0 / RAND_MAX) - 1.0) * m_Vec[PEMIT_SPREAD].x;
+        tilt_rand = (float(rand() * 2.0 / RAND_MAX) - 1.0) * m_Vec[PEMIT_SPREAD].y;
+        dir.x = cos((m_Vec[PEMIT_ANG].x + ang_rand) * DEGtoRAD) * sin((m_Vec[PEMIT_ANG].y + tilt_rand) * DEGtoRAD) * m_Vec[PEMIT_ANG].z;
+        dir.y = sin((m_Vec[PEMIT_ANG].x + ang_rand) * DEGtoRAD) * sin((m_Vec[PEMIT_ANG].y + tilt_rand) * DEGtoRAD) * m_Vec[PEMIT_ANG].z;
+        dir.z = cos((m_Vec[PEMIT_ANG].y + tilt_rand) * DEGtoRAD) * m_Vec[PEMIT_ANG].z;
+        pos = m_Vec[PEMIT_POS];
+        pos.x += spacing * (n / x);
+        pos.y += spacing * (n % x);
 		
-		p = AddParticle ();
-		*(mPos+n) = pos;
-		*(mVel+n) = dir;
-		*(mVelEval+n) = dir;
-		*(mAge+n) = 0;
-		*(mClr+n) = COLORA ( m_Time/10.0, m_Time/5.0, m_Time /4.0, 1 );
+        p = AddParticle();
+        *(mPos + n) = pos;
+        *(mVel + n) = dir;
+        *(mVelEval + n) = dir;
+        *(mAge + n) = 0;
+        *(mClr + n) = COLORA(m_Time / 10.0, m_Time / 5.0, m_Time / 4.0, 1);
 	}
 }
 
@@ -1873,7 +1937,7 @@ void FluidSystem::Draw ( Camera3D& cam, float rad )
 		glBindTexture ( GL_TEXTURE_2D, mTex[0] );
 		glTexImage2D ( GL_TEXTURE_2D, 0, GL_RGB32F_ARB, 2048, int(NumPoints()/2048)+1, 0, GL_RGB, GL_FLOAT, mPos );
 		glBindTexture ( GL_TEXTURE_2D, 0x0 );
-		glFinish ();*/		
+		glFinish ();*/
 		} break;
 	};
 
@@ -1983,10 +2047,10 @@ int FluidSystem::getLastRecording ()
 
 void FluidSystem::Record ()
 {
-	Vector3DF*  ppos =		mPos;
-	Vector3DF*  pvel =		mVel;
-	float*		pdens =		mDensity;
-	DWORD*		pclr =		mClr;
+	Vector3DF*  ppos    =	mPos;
+	Vector3DF*  pvel    =	mVel;
+	float*		pdens   =	mDensity;
+	DWORD*		pclr    =	mClr;
 	
 	char*		dat = mPackBuf;
 	int			channels;
@@ -2236,24 +2300,24 @@ void FluidSystem::SetupDefaultParams ()
 	// draining the system from energy as intended."
 	//    Actual visocity of water = 0.001 Pa.s    // viscosity of water at 20 deg C.
 
-	m_Time = 0;							// Start at T=0
-	m_DT = 0.003;	
+	m_Time                      = 0;	        // Start at T=0
+	m_DT                        = 0.003;	
 
-	m_Param [ PSIMSCALE ] =		0.005;			// unit size
-	m_Param [ PVISC ] =			0.35;			// pascal-second (Pa.s) = 1 kg m^-1 s^-1  (see wikipedia page on viscosity)
-	m_Param [ PRESTDENSITY ] =	600.0;			// kg / m^3
-	m_Param [ PSPACING ]	=	0.0;			// spacing will be computed automatically from density in most examples (set to 0 for autocompute)
-	m_Param [ PMASS ] =			0.00020543;		// kg
-	m_Param [ PRADIUS ] =		0.02;			// m
-	m_Param [ PDIST ] =			0.0059;			// m
-	m_Param [ PSMOOTHRADIUS ] =	0.01;			// m 
-	m_Param [ PINTSTIFF ] =		1.5;
-	m_Param [ PEXTSTIFF ] =		50000.0;
-	m_Param [ PEXTDAMP ] =		100.0;
-	m_Param [ PACCEL_LIMIT ] =	150.0;			// m / s^2 M: max a
-	m_Param [ PVEL_LIMIT ] =	3.0;			// m / s M: max v
-	m_Param [ PMAX_FRAC ] = 1.0;
-	m_Param [ PPOINT_GRAV_AMT ] = 0.0;
+    m_Param[PSIMSCALE]          = 0.005;		// unit size
+    m_Param[PVISC]              = 0.35;			// pascal-second (Pa.s) = 1 kg m^-1 s^-1  (see wikipedia page on viscosity)
+    m_Param[PRESTDENSITY]       = 600.0;		// kg / m^3
+    m_Param[PSPACING]           = 0.0;			// spacing will be computed automatically from density in most examples (set to 0 for autocompute)
+    m_Param[PMASS]              = 0.00020543;	// kg
+    m_Param[PRADIUS]            = 0.02;			// m
+    m_Param[PDIST]              = 0.0059;		// m
+    m_Param[PSMOOTHRADIUS]      = 0.01;			// m 
+    m_Param[PINTSTIFF]          = 1.5;
+    m_Param[PEXTSTIFF]          = 50000.0;
+    m_Param[PEXTDAMP]           = 100.0;
+    m_Param[PACCEL_LIMIT]       = 150.0;		// m / s^2 M: max a
+    m_Param[PVEL_LIMIT]         = 3.0;			// m / s M: max v
+    m_Param[PMAX_FRAC]          = 1.0;
+    m_Param[PPOINT_GRAV_AMT]    = 0.0;
 
     m_Param[PGROUND_SLOPE]      = 0.0;
     m_Param[PFORCE_MIN]         = 0.0;
@@ -2264,15 +2328,19 @@ void FluidSystem::SetupDefaultParams ()
     m_Toggle[PLEVY_BARRIER]     = false;
     m_Toggle[PDRAIN_BARRIER]    = false;
 
-    m_Param[PSTAT_NBRMAX] = 0;
-    m_Param[PSTAT_SRCHMAX] = 0;
+    // M: set default value for surface number and smoothradius
+    m_Param[SFNUM]              = 40000000;
+    m_Param[SFSMOOTHRADIUS]     = 0.005;
 
-    m_Vec[PPOINT_GRAV_POS].Set(0, 50, 0);
-    m_Vec[PPLANE_GRAV_DIR].Set(0, -9.8, 0);
-    m_Vec[PEMIT_POS].Set(0, 0, 0);
-    m_Vec[PEMIT_RATE].Set(0, 0, 0);
-    m_Vec[PEMIT_ANG].Set(0, 90, 1.0);
-    m_Vec[PEMIT_DANG].Set(0, 0, 0);
+    m_Param[PSTAT_NBRMAX]       = 0;
+    m_Param[PSTAT_SRCHMAX]      = 0;
+
+    m_Vec[PPOINT_GRAV_POS].     Set(0, 50, 0);
+    m_Vec[PPLANE_GRAV_DIR].     Set(0, -9.8, 0);
+    m_Vec[PEMIT_POS].           Set(0, 0, 0);
+    m_Vec[PEMIT_RATE].          Set(0, 0, 0);
+    m_Vec[PEMIT_ANG].           Set(0, 90, 1.0);
+    m_Vec[PEMIT_DANG].          Set(0, 0, 0);
 
     // Default sim config
     m_Toggle[PRUN]      = true;				// Run integrator
@@ -2329,70 +2397,71 @@ void FluidSystem::SetupExampleParams ( bool bStart )
 	Vector3DF pos;
 	Vector3DF min, max;
 	
-	switch ( (int) m_Param[PEXAMPLE] ) {
+    switch ((int)m_Param[PEXAMPLE]) {
 
-	case 0:	{	// Regression test. N x N x N static grid
+    case 0:
+    {	// Regression test. N x N x N static grid
 
-		int k = ceil ( pow ( (float) m_Param[PNUM], (float) 1.0/3.0f ) );
-		m_Vec [ PVOLMIN ].Set ( 0, 0, 0 );
-		m_Vec [ PVOLMAX ].Set ( 2.0+(k/2), 2.0+(k/2), 2.0+(k/2) );
-		m_Vec [ PINITMIN ].Set ( 1.0, 1.0, 1.0 );
-		m_Vec [ PINITMAX ].Set ( 1.0+(k/2), 1.0+(k/2), 1.0+(k/2) );
-		
-		m_Param [ PPOINT_GRAV_AMT ] = 0.0;		// No gravity
-		m_Vec [ PPLANE_GRAV_DIR ].Set ( 0.0, 0.0, 0.0 );			
-		m_Param [ PSPACING ] = 0.5;				// Fixed spacing		Dx = x-axis density
-		m_Param [ PSMOOTHRADIUS ] =	m_Param [PSPACING];		// Search radius
-		m_Toggle [ PRUN ] = false;				// Do NOT run sim. Neighbors only.				
-		m_Param [PDRAWMODE] = 1;				// Point drawing
-		m_Param [PDRAWGRID] = 1;				// Grid drawing
-		m_Param [PDRAWTEXT] = 1;				// Text drawing
-		m_Param [PSIMSCALE ] = 1.0;
-	
-		} break;
-	case 1:		// Wave pool						
-		m_Vec [ PVOLMIN ].Set ( -100, 0, -100 );
-		m_Vec [ PVOLMAX ].Set (  100, 100, 100 );
-		m_Vec [ PINITMIN ].Set ( -50, 20, -90 );
-		m_Vec [ PINITMAX ].Set (  90, 90,  90 );
-		m_Param [ PFORCE_MIN ] = 10.0;	
-		m_Param [ PGROUND_SLOPE ] = 0.04;
-		break;
-	case 2:		// Large coast						
-		m_Vec [ PVOLMIN ].Set ( -200, 0, -40 );
-		m_Vec [ PVOLMAX ].Set (  200, 200, 40 );
-		m_Vec [ PINITMIN ].Set ( -120, 40, -30 );
-		m_Vec [ PINITMAX ].Set (  190, 190,  30 );
-		m_Param [ PFORCE_MIN ] = 20.0;	
-		m_Param [ PGROUND_SLOPE ] = 0.10;
-		break;
-	case 3:		// Small dam break
-		m_Vec [ PVOLMIN ].Set ( -40, 0, -40  );
-		m_Vec [ PVOLMAX ].Set ( 40, 60, 40 );
-		m_Vec [ PINITMIN ].Set ( 0, 8, -35 );
-		m_Vec [ PINITMAX ].Set ( 35, 55, 35 );		
-		m_Param [ PFORCE_MIN ] = 0.0;
-		m_Param [ PFORCE_MAX ] = 0.0;
-		m_Vec [ PPLANE_GRAV_DIR ].Set ( 0.0f, -9.8f, 0.0f );
-		break;
-	case 4:		// Dual-Wave pool
-		m_Vec [ PVOLMIN ].Set ( -100, 0, -15 );
-		m_Vec [ PVOLMAX ].Set ( 100, 100, 15 );
-		m_Vec [ PINITMIN ].Set ( -80, 8, -10 );
-		m_Vec [ PINITMAX ].Set ( 80, 90, 10 );
-		m_Param [ PFORCE_MIN ] = 20.0;
-		m_Param [ PFORCE_MAX ] = 20.0;
-		m_Vec [ PPLANE_GRAV_DIR ].Set ( 0.0f, -9.8f, 0.0f );	
-		break;
-	case 5:		// Microgravity
-		m_Vec [ PVOLMIN ].Set ( -80, 0, -80 );
-		m_Vec [ PVOLMAX ].Set ( 80, 100, 80 );
-		m_Vec [ PINITMIN ].Set ( -60, 40, -60 );
-		m_Vec [ PINITMAX ].Set ( 60, 80, 60 );		
-		m_Vec [ PPLANE_GRAV_DIR ].Set ( 0, -1, 0 );	
-		m_Param [ PGROUND_SLOPE ] = 0.1;
-		break;
-	}
+        int k = ceil(pow((float)m_Param[PNUM], (float) 1.0 / 3.0f));
+        m_Vec[PVOLMIN].Set(0, 0, 0);
+        m_Vec[PVOLMAX].Set(2.0 + (k / 2), 2.0 + (k / 2), 2.0 + (k / 2));
+        m_Vec[PINITMIN].Set(1.0, 1.0, 1.0);
+        m_Vec[PINITMAX].Set(1.0 + (k / 2), 1.0 + (k / 2), 1.0 + (k / 2));
+
+        m_Param[PPOINT_GRAV_AMT] = 0.0;		// No gravity
+        m_Vec[PPLANE_GRAV_DIR].Set(0.0, 0.0, 0.0);
+        m_Param[PSPACING] = 0.5;				// Fixed spacing		Dx = x-axis density
+        m_Param[PSMOOTHRADIUS] = m_Param[PSPACING];		// Search radius
+        m_Toggle[PRUN] = true;				// Do NOT run sim. Neighbors only.				
+        m_Param[PDRAWMODE] = 1;				// Point drawing
+        m_Param[PDRAWGRID] = 1;				// Grid drawing
+        m_Param[PDRAWTEXT] = 1;				// Text drawing
+        m_Param[PSIMSCALE] = 1.0;
+
+    } break;
+    case 1:		// Wave pool						
+        m_Vec[PVOLMIN].Set(-100, 0, -100);
+        m_Vec[PVOLMAX].Set(100, 100, 100);
+        m_Vec[PINITMIN].Set(-50, 20, -90);
+        m_Vec[PINITMAX].Set(90, 90, 90);
+        m_Param[PFORCE_MIN] = 10.0;
+        m_Param[PGROUND_SLOPE] = 0.04;
+        break;
+    case 2:		// Large coast						
+        m_Vec[PVOLMIN].Set(-200, 0, -40);
+        m_Vec[PVOLMAX].Set(200, 200, 40);
+        m_Vec[PINITMIN].Set(-120, 40, -30);
+        m_Vec[PINITMAX].Set(190, 190, 30);
+        m_Param[PFORCE_MIN] = 20.0;
+        m_Param[PGROUND_SLOPE] = 0.10;
+        break;
+    case 3:		// Small dam break
+        m_Vec[PVOLMIN].Set(-40, 0, -40);
+        m_Vec[PVOLMAX].Set(40, 60, 40);
+        m_Vec[PINITMIN].Set(0, 8, -35);
+        m_Vec[PINITMAX].Set(35, 55, 35);
+        m_Param[PFORCE_MIN] = 0.0;
+        m_Param[PFORCE_MAX] = 0.0;
+        m_Vec[PPLANE_GRAV_DIR].Set(0.0f, -9.8f, 0.0f);
+        break;
+    case 4:		// Dual-Wave pool
+        m_Vec[PVOLMIN].Set(-100, 0, -15);
+        m_Vec[PVOLMAX].Set(100, 100, 15);
+        m_Vec[PINITMIN].Set(-80, 8, -10);
+        m_Vec[PINITMAX].Set(80, 90, 10);
+        m_Param[PFORCE_MIN] = 20.0;
+        m_Param[PFORCE_MAX] = 20.0;
+        m_Vec[PPLANE_GRAV_DIR].Set(0.0f, -9.8f, 0.0f);
+        break;
+    case 5:		// Microgravity
+        m_Vec[PVOLMIN].Set(-80, 0, -80);
+        m_Vec[PVOLMAX].Set(80, 100, 80);
+        m_Vec[PINITMIN].Set(-60, 40, -60);
+        m_Vec[PINITMAX].Set(60, 80, 60);
+        m_Vec[PPLANE_GRAV_DIR].Set(0, -1, 0);
+        m_Param[PGROUND_SLOPE] = 0.1;
+        break;
+    }
 	
 	// Load scene from XML file
 	int cnt = ParseXML ( "Scene", (int) m_Param[PEXAMPLE], bStart );
@@ -2404,6 +2473,7 @@ void FluidSystem::SetupSpacing ()
 	
 	if ( m_Param[PSPACING] == 0 ) {
 		// Determine spacing from density
+        // M: the program runs into this part all the time
 		m_Param [PDIST] = pow ( m_Param[PMASS] / m_Param[PRESTDENSITY], 1/3.0 );	
 		m_Param [PSPACING] = m_Param [ PDIST ]*0.87 / m_Param[ PSIMSCALE ];			
 	} else {

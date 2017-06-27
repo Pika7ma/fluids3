@@ -51,7 +51,7 @@
 
 	#include "xml_settings.h"
 
-	#define MAX_PARAM			50
+	#define MAX_PARAM			60
 	#define GRID_UCHAR			0xFF
 	#define GRID_UNDEF			4294967295
 
@@ -117,10 +117,10 @@
 	#define PFORCE_FREQ			47
 
     // M: Surface particles attributes
-    // M: initialized in FluidSystem::SetupDefaultPrams()
-    #define SFMAX_PARAM         30
-    #define SFNUM               0
-    #define SFSMOOTHRADIUS      1
+    #define SFNUM               48
+    #define SFSMOOTHRADIUS      49
+    #define SFGRIDSIZE          50
+    #define SFGRID_DENSITY      51
 
 	// Vector params
 	#define PVOLMIN				0
@@ -191,6 +191,9 @@
         int AddParticle();
         void AddEmit(float spacing);
         int NumPoints() { return mNumPoints; }
+
+        // M: Surface Particle Utilities
+        void AllocateSurfaceParticles(int cnt);
 		
 
 		// Setup
