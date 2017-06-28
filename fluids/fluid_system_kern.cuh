@@ -127,6 +127,12 @@
 		int				gridSrch, gridTotal, gridAdjCnt, gridActive;
 
 		int				gridAdj[64];
+
+        float3			sfGridSize, sfGridDelta, sfGridMin, sfGridMax;
+        int3			sfGridRes, sfGridScanMax;
+        int				sfGridSrch, sfGridTotal, sfGridAdjCnt, sfGridActive;
+
+        int				sfGridAdj[64];
 	};
 
 	// Prefix Sum defines - 16 banks on G80
