@@ -190,10 +190,10 @@
         int AddSurfaceParticle();
         void AddEmit(float spacing);
         int NumPoints() { return mNumPoints; }
+        int NumSfPoints() { return m_Param[SFNUM]; }
 
         // M: Surface Particle Utilities
         void AllocateSurfaceParticles(int cnt);
-		
 
 		// Setup
         void Setup(bool bStart);

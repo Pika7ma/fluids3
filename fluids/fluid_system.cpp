@@ -103,10 +103,10 @@ FluidSystem::FluidSystem ()
 	m_Toggle [ PPROFILE ]	=	false;
 	m_Toggle [ PCAPTURE ]   =	false;
 
-	if ( !xml.Load ( "scene.xml" ) ) {
-		app_printf ( "fluid", "ERROR: Problem loading scene.xml. Check formatting.\n" );
-		exit(-1);
-	}
+    if (!xml.Load("scene.xml")) {
+        app_printf("fluid", "ERROR: Problem loading scene.xml. Check formatting.\n");
+        exit(-1);
+    }
 
 }
 
@@ -122,7 +122,6 @@ void FluidSystem::Setup(bool bStart)
 
     ClearNeighborTable();
     mNumPoints = 0;
-    sfNumPoints = 0;
 
     SetupDefaultParams();
 
@@ -132,7 +131,7 @@ void FluidSystem::Setup(bool bStart)
 
     AllocateParticles(m_Param[PNUM]);
 
-    AllocateSurfaceParticles(2 * m_Param[PNUM]);
+    AllocateSurfaceParticles(m_Param[SFNUM]);
 
     //AllocatePackBuf(); // M: useless
 
@@ -150,7 +149,7 @@ void FluidSystem::Setup(bool bStart)
 
         //Sleep(500);
 
-        FluidSetupCUDA(NumPoints(), m_GridSrch, *(int3*)& m_GridRes, *(float3*)& m_GridSize, *(float3*)& m_GridDelta, *(float3*)& m_GridMin, *(float3*)& m_GridMax, m_GridTotal, (int)m_Vec[PEMIT_RATE].x);
+        FluidSetupCUDA(NumPoints(), m_GridSrch, *(int3*)& m_GridRes, *(float3*)& m_GridSize, *(float3*)& m_GridDelta, *(float3*)& m_GridMin, *(float3*)& m_GridMax, m_GridTotal, (int)m_Vec[PEMIT_RATE].x, NumSfPoints());
 
         //Sleep(500);
 
@@ -259,6 +258,10 @@ void FluidSystem::AllocateSurfaceParticles(int cnt) {
     sfNbrCnt = (uint*)malloc(cnt * sizeof(uint));
     if (srcNbrCnt != 0x0) { memcpy(sfNbrCnt, srcNbrCnt, nump * sizeof(uint)); free(srcNbrCnt); }
 
+    uint* srcExist = sfExist;
+    sfExist = (uint*)malloc(cnt * sizeof(uint));
+    if (srcExist != 0x0) { memcpy(sfExist, srcExist, nump * sizeof(uint)); free(srcExist); }
+
     sfMaxPoints = cnt;
 }
 
@@ -266,6 +269,7 @@ void FluidSystem::AllocateSurfaceParticles(int cnt) {
 // Allocate particle memory
 void FluidSystem::AllocateParticles ( int cnt )
 {
+
 	int nump = 0;		// number to copy from previous data
 
 	Vector3DF* srcPos = mPos;
@@ -1124,6 +1128,8 @@ void FluidSystem::SetupGridAllocate ( Vector3DF min, Vector3DF max, float sim_sc
 	m_GridDelta /= m_GridSize;
 	
 	m_GridTotal = (int)(m_GridRes.x * m_GridRes.y * m_GridRes.z);
+    //app_printf("%d %d\n", m_GridTotal, mNumPoints);
+    //system("pause");
 
     // Allocate grid
     if (m_Grid      != 0x0) free(m_Grid);
@@ -2326,7 +2332,6 @@ void FluidSystem::SetupDefaultParams ()
     m_Toggle[PDRAIN_BARRIER]    = false;
 
     // M: set default value for surface number and smoothradius
-    m_Param[SFNUM]              = 40000000;
     m_Param[SFSMOOTHRADIUS]     = 0.005;
 
     m_Param[PSTAT_NBRMAX]       = 0;
@@ -2462,6 +2467,8 @@ void FluidSystem::SetupExampleParams ( bool bStart )
 	
 	// Load scene from XML file
 	int cnt = ParseXML ( "Scene", (int) m_Param[PEXAMPLE], bStart );
+
+    m_Param[SFNUM] = 2 * m_Param[PNUM];
 }
 
 void FluidSystem::SetupSpacing ()

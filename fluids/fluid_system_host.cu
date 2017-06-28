@@ -196,7 +196,7 @@ void FluidClearCUDA ()
 }
 
 
-void FluidSetupCUDA ( int num, int gsrch, int3 res, float3 size, float3 delta, float3 gmin, float3 gmax, int total, int chk )
+void FluidSetupCUDA(int num, int gsrch, int3 res, float3 size, float3 delta, float3 gmin, float3 gmax, int total, int chk, int sfNum)
 {	
 	fcuda.pnum          = num;	
 	fcuda.gridRes       = res;
@@ -210,6 +210,7 @@ void FluidSetupCUDA ( int num, int gsrch, int3 res, float3 size, float3 delta, f
 	fcuda.gridScanMax   = res;
     fcuda.gridScanMax  -= make_int3(fcuda.gridSrch, fcuda.gridSrch, fcuda.gridSrch);
 	fcuda.chk           = chk;
+    fcuda.sfnum         = sfNum;
 
 	// Build Adjacency Lookup
     int cell = 0;
@@ -228,10 +229,13 @@ void FluidSetupCUDA ( int num, int gsrch, int3 res, float3 size, float3 delta, f
 	int threadsPerBlock = 192;
 
     computeNumBlocks(fcuda.pnum,        threadsPerBlock,    fcuda.numBlocks,   fcuda.numThreads);		// particles
+    computeNumBlocks(fcuda.sfnum,       threadsPerBlock,    fcuda.sfNumBlocks, fcuda.sfNumThreads);
     computeNumBlocks(fcuda.gridTotal,   threadsPerBlock,    fcuda.gridBlocks,  fcuda.gridThreads);		// grid cell
 
 	// Allocate particle buffers
-    fcuda.szPnts = (fcuda.numBlocks  * fcuda.numThreads);     
+    fcuda.szPnts = (fcuda.numBlocks * fcuda.numThreads);     
+    fcuda.szSfPnts = (fcuda.sfNumBlocks * fcuda.sfNumThreads);
+
     app_printf ( "CUDA Allocate: \n" );
 	app_printf ( "  Pnts: %d, t:%dx%d=%d, Size:%d\n", fcuda.pnum, fcuda.numBlocks, fcuda.numThreads, fcuda.numBlocks*fcuda.numThreads, fcuda.szPnts);
     app_printf ( "  Grid: %d, t:%dx%d=%d, bufGrid:%d, Res: %dx%dx%d\n", fcuda.gridTotal, fcuda.gridBlocks, fcuda.gridThreads, fcuda.gridBlocks*fcuda.gridThreads, fcuda.szGrid, (int) fcuda.gridRes.x, (int) fcuda.gridRes.y, (int) fcuda.gridRes.z );		
@@ -246,6 +250,17 @@ void FluidSetupCUDA ( int num, int gsrch, int3 res, float3 size, float3 delta, f
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgndx,		fcuda.szPnts*sizeof(uint)),		"Malloc mgndx" );	
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.mclr,		fcuda.szPnts*sizeof(uint) ),	"Malloc mclr" );	
 	//cudaCheck ( cudaMalloc ( (void**) &fbuf.mcluster,	fcuda.szPnts*sizeof(uint) ) );	
+
+    cudaCheck(cudaMalloc((void**)&fbuf.sfpos,           fcuda.szSfPnts * sizeof(float) * 3),    "Malloc sfpos");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfvel,           fcuda.szSfPnts * sizeof(float) * 3),    "Malloc sfvel");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfveleval,       fcuda.szSfPnts * sizeof(float) * 3),    "Malloc sfveleval");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfforce,         fcuda.szSfPnts * sizeof(float) * 3),    "Malloc sfforce");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfpress,         fcuda.szSfPnts * sizeof(float)),        "Malloc sfpress");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfdensity,       fcuda.szSfPnts * sizeof(float)),        "Malloc sfdensity");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfgcell,         fcuda.szSfPnts * sizeof(uint)),         "Malloc sfgcell");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfgndx,          fcuda.szSfPnts * sizeof(uint)),         "Malloc sfgndx");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfclr,           fcuda.szSfPnts * sizeof(uint)),         "Malloc sfclr");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfexist,         fcuda.szSfPnts * sizeof(uint)),         "Malloc sfexist");
 
 	int temp_size = 4*(sizeof(float)*3) + 2*sizeof(float) + 2*sizeof(int) + sizeof(uint);
 	cudaCheck ( cudaMalloc ( (void**) &fbuf.msortbuf,	fcuda.szPnts*temp_size ),		"Malloc msortbuf" );

@@ -78,6 +78,7 @@
         uint*			sfgcell; // M: particle's property, indicates which grid cell the particle is in
         uint*			sfgndx;  // M: particle's property, indicates the rank of this particle in its cell (i.g. help find the particle from the cell)
         uint*			sfclr;   // 4 byte color
+        uint*           sfexist;
 
         uint*			sfcluster;
 
@@ -102,8 +103,8 @@
         int             sfNumThreads, sfNumBlocks;
         int             sfGridThreads, sfGridBlocks;
 
-		int				szPnts, szHash, szGrid;
-		int				stride, pnum;
+        int				szPnts, szHash, szGrid, szSfPnts;
+		int				stride, pnum, sfnum;
 		int				chk;
 		float			pdist, pmass, prest_dens;
 		float			pextstiff, pintstiff;
