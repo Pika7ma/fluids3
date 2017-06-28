@@ -193,11 +193,6 @@ void FluidClearCUDA ()
     //cudaCheck ( cudaFree ( fbuf.mcluster ) );	
 
     cudaCheck(cudaFree(fbuf.sfsortbuf),     "Free sfsortbuf");
-
-    cudaCheck(cudaFree(fbuf.sfgrid),        "Free sfgrid");
-    cudaCheck(cudaFree(fbuf.sfgridcnt),     "Free sfgridcnt");
-    cudaCheck(cudaFree(fbuf.sfgridoff),     "Free sfgridoff");
-    cudaCheck(cudaFree(fbuf.sfgridactive),  "Free sfgridactive");
 }
 
 
@@ -211,9 +206,9 @@ void FluidSetupCUDA ( int num, int gsrch, int3 res, float3 size, float3 delta, f
 	fcuda.gridMax       = gmax;
 	fcuda.gridTotal     = total;
 	fcuda.gridSrch      = gsrch;
-	fcuda.gridAdjCnt    = gsrch*gsrch*gsrch;
+	fcuda.gridAdjCnt    = gsrch * gsrch * gsrch;
 	fcuda.gridScanMax   = res;
-	fcuda.gridScanMax  -= make_int3( fcuda.gridSrch, fcuda.gridSrch, fcuda.gridSrch );
+    fcuda.gridScanMax  -= make_int3(fcuda.gridSrch, fcuda.gridSrch, fcuda.gridSrch);
 	fcuda.chk           = chk;
 
 	// Build Adjacency Lookup

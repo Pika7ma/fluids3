@@ -119,10 +119,6 @@
     // M: Surface particles attributes
     #define SFNUM               48
     #define SFSMOOTHRADIUS      49
-    #define SFGRIDSIZE          50
-    #define SFGRID_DENSITY      51
-
-    #define SFSTAT_GMEM			52
 
 	// Vector params
 	#define PVOLMIN				0
