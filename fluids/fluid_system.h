@@ -122,6 +122,8 @@
     #define SFGRIDSIZE          50
     #define SFGRID_DENSITY      51
 
+    #define SFSTAT_GMEM			52
+
 	// Vector params
 	#define PVOLMIN				0
 	#define PVOLMAX				1
@@ -206,6 +208,7 @@
         void SetupSpacing();
         void SetupAddVolume(Vector3DF min, Vector3DF max, float spacing, float offs, int total);
         void SetupGridAllocate(Vector3DF min, Vector3DF max, float sim_scale, float cell_size, float border);
+        void SetupSurfaceGridAllocate(Vector3DF min, Vector3DF max, float sim_scale, float cell_size, float border);
         int ParseXML(std::string name, int id, bool bStart);
 
         // Neighbor Search

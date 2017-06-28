@@ -80,6 +80,13 @@
         uint*			sfclr;   // 4 byte color
 
         uint*			sfcluster;
+
+        char*			sfsortbuf;
+
+        uint*			sfgrid;
+        int*			sfgridcnt;   // M: grid's property, indicates the number of particles in this grid cell
+        int*			sfgridoff;
+        int*			sfgridactive;
 	};
 
 	// Temporary sort buffer offsets
@@ -97,6 +104,8 @@
 	struct FluidParams {
 		int				numThreads, numBlocks;
 		int				gridThreads, gridBlocks;	
+        int             sfNumThreads, sfNumBlocks;
+        int             sfGridThreads, sfGridBlocks;
 
 		int				szPnts, szHash, szGrid;
 		int				stride, pnum;

@@ -180,6 +180,24 @@ void FluidClearCUDA ()
 	cudaCheck ( cudaFree ( fbuf.mgridcnt ),		"Free mgridcnt" );
 	cudaCheck ( cudaFree ( fbuf.mgridoff ),		"Free mgridoff" );
 	cudaCheck ( cudaFree ( fbuf.mgridactive ),	"Free mgridactive" );
+
+    cudaCheck(cudaFree(fbuf.sfpos),         "Free sfdpos");
+    cudaCheck(cudaFree(fbuf.sfvel),         "Free sfvel");
+    cudaCheck(cudaFree(fbuf.sfveleval),     "Free sfveleval");
+    cudaCheck(cudaFree(fbuf.sfforce),       "Free sfforce");
+    cudaCheck(cudaFree(fbuf.sfpress),       "Free sfpress");
+    cudaCheck(cudaFree(fbuf.sfdensity),     "Free sfdensity");
+    cudaCheck(cudaFree(fbuf.sfgcell),       "Free sfgcell");
+    cudaCheck(cudaFree(fbuf.sfgndx),        "Free sfgndx");
+    cudaCheck(cudaFree(fbuf.sfclr),         "Free sfclr");
+    //cudaCheck ( cudaFree ( fbuf.mcluster ) );	
+
+    cudaCheck(cudaFree(fbuf.sfsortbuf),     "Free sfsortbuf");
+
+    cudaCheck(cudaFree(fbuf.sfgrid),        "Free sfgrid");
+    cudaCheck(cudaFree(fbuf.sfgridcnt),     "Free sfgridcnt");
+    cudaCheck(cudaFree(fbuf.sfgridoff),     "Free sfgridoff");
+    cudaCheck(cudaFree(fbuf.sfgridactive),  "Free sfgridactive");
 }
 
 
