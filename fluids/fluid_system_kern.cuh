@@ -68,6 +68,18 @@
 		int*			mgridcnt;   // M: grid's property, indicates the number of particles in this grid cell
 		int*			mgridoff;
 		int*			mgridactive;
+
+        float3*         sfpos;
+        float3*			sfvel;
+        float3*			sfveleval;
+        float3*			sfforce;
+        float*			sfpress;
+        float*			sfdensity;
+        uint*			sfgcell; // M: particle's property, indicates which grid cell the particle is in
+        uint*			sfgndx;  // M: particle's property, indicates the rank of this particle in its cell (i.g. help find the particle from the cell)
+        uint*			sfclr;   // 4 byte color
+
+        uint*			sfcluster;
 	};
 
 	// Temporary sort buffer offsets

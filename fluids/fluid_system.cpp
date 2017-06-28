@@ -135,7 +135,7 @@ void FluidSystem::Setup(bool bStart)
 
     AllocateParticles(m_Param[PNUM]);
 
-    AllocateSurfaceParticles(m_Param[SFNUM]);
+    AllocateSurfaceParticles(2 * m_Param[PNUM]);
 
     //AllocatePackBuf(); // M: useless
 
@@ -345,6 +345,22 @@ int FluidSystem::AddParticle ()
 	return n;
 }
 
+int FluidSystem::AddSurfaceParticle() {
+    if (mNumPoints >= mMaxPoints) return -1;
+    int n = mNumPoints;
+    (mPos + n)->Set(0, 0, 0);
+    (mVel + n)->Set(0, 0, 0);
+    (mVelEval + n)->Set(0, 0, 0);
+    (mForce + n)->Set(0, 0, 0);
+    *(mPressure + n) = 0;
+    *(mDensity + n) = 0;
+    *(mGridNext + n) = -1;
+    *(mClusterCell + n) = -1;
+
+    mNumPoints++;
+    return n;
+}
+
 void FluidSystem::SetupAddVolume ( Vector3DF min, Vector3DF max, float spacing, float offs, int total )
 {
 	Vector3DF pos;
@@ -355,6 +371,7 @@ void FluidSystem::SetupAddVolume ( Vector3DF min, Vector3DF max, float spacing, 
 	cntz = ceil( (max.z-min.z-offs) / spacing );
 	int cnt = cntx * cntz;
 	
+    // M: dx, dy, dz only matters the color
 	min += offs;
 	max -= offs;
 
@@ -2484,8 +2501,10 @@ void FluidSystem::SetupSpacing ()
 	app_printf ( "Add Particles. Density: %f, Spacing: %f, PDist: %f\n", m_Param[PRESTDENSITY], m_Param [ PSPACING ], m_Param[ PDIST ] );
 
 	// Particle Boundaries
-	m_Vec[PBOUNDMIN] = m_Vec[PVOLMIN];		m_Vec[PBOUNDMIN] += 2.0*(m_Param[PGRIDSIZE] / m_Param[PSIMSCALE]);
-	m_Vec[PBOUNDMAX] = m_Vec[PVOLMAX];		m_Vec[PBOUNDMAX] -= 2.0*(m_Param[PGRIDSIZE] / m_Param[PSIMSCALE]);
+	m_Vec[PBOUNDMIN] = m_Vec[PVOLMIN];
+    m_Vec[PBOUNDMIN] += 2.0*(m_Param[PGRIDSIZE] / m_Param[PSIMSCALE]);
+	m_Vec[PBOUNDMAX] = m_Vec[PVOLMAX];
+    m_Vec[PBOUNDMAX] -= 2.0*(m_Param[PGRIDSIZE] / m_Param[PSIMSCALE]);
 }
 
 

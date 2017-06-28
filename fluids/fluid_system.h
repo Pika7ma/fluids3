@@ -189,6 +189,7 @@
 		// Particle Utilities
         void AllocateParticles(int cnt);
         int AddParticle();
+        int AddSurfaceParticle();
         void AddEmit(float spacing);
         int NumPoints() { return mNumPoints; }
 
@@ -346,8 +347,8 @@
         // M: Surface Particle Buffers
         int						sfNumPoints;
         int						sfMaxPoints;
-        int						sfGoodPoints;
         Vector3DF*				sfPos;
+        uint*                   sfExist;
         DWORD*					sfClr;
         Vector3DF*				sfVel;
         Vector3DF*				sfVelEval;
