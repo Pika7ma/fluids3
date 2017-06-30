@@ -53,55 +53,73 @@
 
 #define EPSILON			0.00001f			//for collision detection
 
-void FluidSystem::TransferToCUDA ()
-{ 
-	CopyToCUDA ( (float*) mPos, (float*) mVel, (float*) mVelEval, (float*) mForce, mPressure, mDensity, mClusterCell, mGridNext, (char*) mClr ); 
+void FluidSystem::TransferToCUDA() {
+    CopyToCUDA(
+        (float*)mPos, 
+        (float*)mVel, 
+        (float*)mVelEval, 
+        (float*)mForce, 
+        mPressure, 
+        mDensity, 
+        mClusterCell, 
+        mGridNext, 
+        (char*)mClr
+    );
 }
-void FluidSystem::TransferFromCUDA ()	
-{
-	CopyFromCUDA ( (float*) mPos, (float*) mVel, (float*) mVelEval, (float*) mForce, mPressure, mDensity, mClusterCell, mGridNext, (char*) mClr );
+void FluidSystem::TransferFromCUDA() {
+    CopyFromCUDA(
+        (float*)mPos, 
+        (float*)mVel, 
+        (float*)mVelEval, 
+        (float*)mForce, 
+        mPressure, 
+        mDensity, 
+        mClusterCell, 
+        mGridNext, 
+        (char*)mClr
+    );
 }
 
 //------------------------------ Initialization
 FluidSystem::FluidSystem ()
 {
-	mNumPoints     = 0;
-	mMaxPoints     = 0;
-	mPackBuf       = 0x0;
-	mPackGrid      = 0x0;
-	mFP            = 0x0;
+    mNumPoints             = 0;
+    mMaxPoints             = 0;
+    mPackBuf               = 0x0;
+    mPackGrid              = 0x0;
+    mFP                    = 0x0;
 
-	mPos           = 0x0;
-	mClr           = 0x0;
-	mVel           = 0x0;
-	mVelEval       = 0x0;
-	mAge           = 0x0;
-	mPressure      = 0x0;
-	mDensity       = 0x0;
-	mForce         = 0x0;
-	mClusterCell   = 0x0;
-	mGridNext      = 0x0;
-	mNbrNdx        = 0x0;
-	mNbrCnt        = 0x0;
-	mSelected      = -1;
-	m_Grid         = 0x0;
-	m_GridCnt      = 0x0;
+    mPos                   = 0x0;
+    mClr                   = 0x0;
+    mVel                   = 0x0;
+    mVelEval               = 0x0;
+    mAge                   = 0x0;
+    mPressure              = 0x0;
+    mDensity               = 0x0;
+    mForce                 = 0x0;
+    mClusterCell           = 0x0;
+    mGridNext              = 0x0;
+    mNbrNdx                = 0x0;
+    mNbrCnt                = 0x0;
+    mSelected              = -1;
+    m_Grid                 = 0x0;
+    m_GridCnt              = 0x0;
 
-	m_Frame        = 0;
-	
-	m_NeighborTable    = 0x0;
-	m_NeighborDist     = 0x0;
-	
-    m_Param[PMODE]          = RUN_CUDA_FULL;
-    m_Param[PEXAMPLE]       = 1;
-    m_Param[PGRID_DENSITY]  = 2.0;
-    m_Param[PNUM]           = 65536 * 128;
+    m_Frame                = 0;
+
+    m_NeighborTable        = 0x0;
+    m_NeighborDist         = 0x0;
+
+    m_Param[PMODE]         = RUN_CUDA_FULL;
+    m_Param[PEXAMPLE]      = 1;
+    m_Param[PGRID_DENSITY] = 2.0;
+    m_Param[PNUM]          = 65536 * 128;
 
 
-	m_Toggle [ PDEBUG ]		=	false;
-	m_Toggle [ PUSE_GRID ]	=	false;
-	m_Toggle [ PPROFILE ]	=	false;
-	m_Toggle [ PCAPTURE ]   =	false;
+    m_Toggle[PDEBUG]       = false;
+    m_Toggle[PUSE_GRID]    = false;
+    m_Toggle[PPROFILE]     = false;
+    m_Toggle[PCAPTURE]     = false;
 
     if (!xml.Load("scene.xml")) {
         app_printf("fluid", "ERROR: Problem loading scene.xml. Check formatting.\n");
@@ -149,12 +167,44 @@ void FluidSystem::Setup(bool bStart)
 
         //Sleep(500);
 
-        FluidSetupCUDA(NumPoints(), m_GridSrch, *(int3*)& m_GridRes, *(float3*)& m_GridSize, *(float3*)& m_GridDelta, *(float3*)& m_GridMin, *(float3*)& m_GridMax, m_GridTotal, (int)m_Vec[PEMIT_RATE].x, NumSfPoints());
+        FluidSetupCUDA(
+            NumPoints(),
+            m_GridSrch,
+            *(int3*)& m_GridRes,
+            *(float3*)& m_GridSize,
+            *(float3*)& m_GridDelta,
+            *(float3*)& m_GridMin,
+            *(float3*)& m_GridMax,
+            m_GridTotal,
+            (int)m_Vec[PEMIT_RATE].x,
+            NumSfPoints()
+        );
 
         //Sleep(500);
 
         Vector3DF grav = m_Vec[PPLANE_GRAV_DIR];
-        FluidParamCUDA(m_Param[PSIMSCALE], m_Param[PSMOOTHRADIUS], m_Param[PRADIUS], m_Param[PMASS], m_Param[PRESTDENSITY], *(float3*)& m_Vec[PBOUNDMIN], *(float3*)& m_Vec[PBOUNDMAX], m_Param[PEXTSTIFF], m_Param[PINTSTIFF], m_Param[PVISC], m_Param[PEXTDAMP], m_Param[PFORCE_MIN], m_Param[PFORCE_MAX], m_Param[PFORCE_FREQ], m_Param[PGROUND_SLOPE], grav.x, grav.y, grav.z, m_Param[PACCEL_LIMIT], m_Param[PVEL_LIMIT]);
+        FluidParamCUDA(
+            m_Param[PSIMSCALE],
+            m_Param[PSMOOTHRADIUS],
+            m_Param[PRADIUS],
+            m_Param[PMASS],
+            m_Param[PRESTDENSITY],
+            *(float3*)& m_Vec[PBOUNDMIN],
+            *(float3*)& m_Vec[PBOUNDMAX],
+            m_Param[PEXTSTIFF],
+            m_Param[PINTSTIFF],
+            m_Param[PVISC],
+            m_Param[PEXTDAMP],
+            m_Param[PFORCE_MIN],
+            m_Param[PFORCE_MAX],
+            m_Param[PFORCE_FREQ],
+            m_Param[PGROUND_SLOPE],
+            grav.x,
+            grav.y,
+            grav.z,
+            m_Param[PACCEL_LIMIT],
+            m_Param[PVEL_LIMIT]
+        );
 
         TransferToCUDA();		// Initial transfer
 
@@ -167,7 +217,28 @@ void FluidSystem::SetParam (int p, float v )
 	m_Param[p] = v;
 	// Update GPU
 	Vector3DF grav = m_Vec[PPLANE_GRAV_DIR];
-	FluidParamCUDA ( m_Param[PSIMSCALE], m_Param[PSMOOTHRADIUS], m_Param[PRADIUS], m_Param[PMASS], m_Param[PRESTDENSITY], *(float3*)& m_Vec[PBOUNDMIN], *(float3*)& m_Vec[PBOUNDMAX], m_Param[PEXTSTIFF], m_Param[PINTSTIFF], m_Param[PVISC], m_Param[PEXTDAMP], m_Param[PFORCE_MIN], m_Param[PFORCE_MAX], m_Param[PFORCE_FREQ], m_Param[PGROUND_SLOPE], grav.x, grav.y, grav.z, m_Param[PACCEL_LIMIT], m_Param[PVEL_LIMIT] );
+    FluidParamCUDA(
+        m_Param[PSIMSCALE],
+        m_Param[PSMOOTHRADIUS],
+        m_Param[PRADIUS],
+        m_Param[PMASS],
+        m_Param[PRESTDENSITY],
+        *(float3*)& m_Vec[PBOUNDMIN],
+        *(float3*)& m_Vec[PBOUNDMAX],
+        m_Param[PEXTSTIFF],
+        m_Param[PINTSTIFF],
+        m_Param[PVISC],
+        m_Param[PEXTDAMP],
+        m_Param[PFORCE_MIN],
+        m_Param[PFORCE_MAX],
+        m_Param[PFORCE_FREQ],
+        m_Param[PGROUND_SLOPE],
+        grav.x,
+        grav.y,
+        grav.z,
+        m_Param[PACCEL_LIMIT],
+        m_Param[PVEL_LIMIT]
+    );
 }
 
 void FluidSystem::SetVec ( int p, Vector3DF v )	
@@ -176,7 +247,28 @@ void FluidSystem::SetVec ( int p, Vector3DF v )
 	m_Vec[p] = v; 
 	// Update GPU
 	Vector3DF grav = m_Vec[PPLANE_GRAV_DIR];
-	FluidParamCUDA ( m_Param[PSIMSCALE], m_Param[PSMOOTHRADIUS], m_Param[PRADIUS], m_Param[PMASS], m_Param[PRESTDENSITY], *(float3*)& m_Vec[PBOUNDMIN], *(float3*)& m_Vec[PBOUNDMAX], m_Param[PEXTSTIFF], m_Param[PINTSTIFF], m_Param[PVISC], m_Param[PEXTDAMP], m_Param[PFORCE_MIN], m_Param[PFORCE_MAX], m_Param[PFORCE_FREQ], m_Param[PGROUND_SLOPE], grav.x, grav.y, grav.z, m_Param[PACCEL_LIMIT], m_Param[PVEL_LIMIT] );
+    FluidParamCUDA(
+        m_Param[PSIMSCALE],
+        m_Param[PSMOOTHRADIUS],
+        m_Param[PRADIUS],
+        m_Param[PMASS],
+        m_Param[PRESTDENSITY], 
+        *(float3*)& m_Vec[PBOUNDMIN], 
+        *(float3*)& m_Vec[PBOUNDMAX], 
+        m_Param[PEXTSTIFF], 
+        m_Param[PINTSTIFF], 
+        m_Param[PVISC], 
+        m_Param[PEXTDAMP], 
+        m_Param[PFORCE_MIN], 
+        m_Param[PFORCE_MAX], 
+        m_Param[PFORCE_FREQ], 
+        m_Param[PGROUND_SLOPE], 
+        grav.x, 
+        grav.y, 
+        grav.z, 
+        m_Param[PACCEL_LIMIT], 
+        m_Param[PVEL_LIMIT]
+    );
 }
 
 void FluidSystem::Exit ()

@@ -98,36 +98,38 @@
 
 	// Fluid Parameters (stored on both host and device)
 	struct FluidParams {
-		int				numThreads, numBlocks;
-		int				gridThreads, gridBlocks;	
+        int				numThreads, numBlocks;
+        int				gridThreads, gridBlocks;
         int             sfNumThreads, sfNumBlocks;
         int             sfGridThreads, sfGridBlocks;
 
         int				szPnts, szHash, szGrid, szSfPnts;
-		int				stride, pnum, sfnum;
-		int				chk;
-		float			pdist, pmass, prest_dens;
-		float			pextstiff, pintstiff;
-		float			pradius, psmoothradius, r2, psimscale, pvisc;
-		float			pforce_min, pforce_max, pforce_freq, pground_slope;
-		float			pvel_limit, paccel_limit, pdamp;
-		float3			pboundmin, pboundmax, pgravity;
-		float			AL, AL2, VL, VL2;
+        int				stride, pnum, sfnum;
+        int				chk;
+        float			pdist, pmass, prest_dens;
+        float			pextstiff, pintstiff;
+        float			pradius, psmoothradius, r2, psimscale, pvisc;
+        float			pforce_min, pforce_max, pforce_freq, pground_slope;
+        float			pvel_limit, paccel_limit, pdamp;
+        float3			pboundmin, pboundmax, pgravity;
+        float			AL, AL2, VL, VL2;
 
-		float			d2, rd2, vterm;		// used in force calculation		 
-		
-		float			poly6kern, spikykern, lapkern;
+        float			d2, rd2, vterm;		// used in force calculation		 
 
-		float3			gridSize, gridDelta, gridMin, gridMax;
-		int3			gridRes, gridScanMax;
-		int				gridSrch, gridTotal, gridAdjCnt, gridActive;
+        float			poly6kern, spikykern, lapkern;
 
-		int				gridAdj[64];
+        float3			gridSize, gridDelta, gridMin, gridMax;
+        int3			gridRes, gridScanMax;
+        int				gridSrch, gridTotal, gridAdjCnt, gridActive;
+
+        int             insertPos;
+
+        int				gridAdj[64];
 	};
 
 	// Prefix Sum defines - 16 banks on G80
-	#define NUM_BANKS		16 // M: Default 16
-	#define LOG_NUM_BANKS	 4 // M: Default 4
+	#define NUM_BANKS       16  // M: Default 16
+	#define LOG_NUM_BANKS   4   // M: Default 4
 
 
 	#ifndef CUDA_KERNEL		

@@ -240,15 +240,15 @@ void FluidSetupCUDA(int num, int gsrch, int3 res, float3 size, float3 delta, flo
 	app_printf ( "  Pnts: %d, t:%dx%d=%d, Size:%d\n", fcuda.pnum, fcuda.numBlocks, fcuda.numThreads, fcuda.numBlocks*fcuda.numThreads, fcuda.szPnts);
     app_printf ( "  Grid: %d, t:%dx%d=%d, bufGrid:%d, Res: %dx%dx%d\n", fcuda.gridTotal, fcuda.gridBlocks, fcuda.gridThreads, fcuda.gridBlocks*fcuda.gridThreads, fcuda.szGrid, (int) fcuda.gridRes.x, (int) fcuda.gridRes.y, (int) fcuda.gridRes.z );		
 	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mpos,		fcuda.szPnts*sizeof(float)*3 ),	"Malloc mpos" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mvel,		fcuda.szPnts*sizeof(float)*3 ),	"Malloc mvel" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mveleval,	fcuda.szPnts*sizeof(float)*3 ),	"Malloc mveleval" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mforce,	    fcuda.szPnts*sizeof(float)*3 ),	"Malloc mforce" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mpress,	    fcuda.szPnts*sizeof(float) ),	"Malloc mpress" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mdensity,	fcuda.szPnts*sizeof(float) ),	"Malloc mdensity" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgcell,	    fcuda.szPnts*sizeof(uint) ),	"Malloc mgcell" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgndx,		fcuda.szPnts*sizeof(uint)),		"Malloc mgndx" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mclr,		fcuda.szPnts*sizeof(uint) ),	"Malloc mclr" );	
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mpos,		fcuda.szPnts * sizeof(float) * 3 ),	    "Malloc mpos" );	
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mvel,		fcuda.szPnts * sizeof(float) * 3 ),	    "Malloc mvel" );	
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mveleval,	fcuda.szPnts * sizeof(float) * 3 ),	    "Malloc mveleval" );	
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mforce,	    fcuda.szPnts * sizeof(float) * 3 ),	    "Malloc mforce" );	
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mpress,	    fcuda.szPnts * sizeof(float)),	        "Malloc mpress" );	
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mdensity,	fcuda.szPnts * sizeof(float)),	        "Malloc mdensity" );	
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgcell,	    fcuda.szPnts * sizeof(uint)),	        "Malloc mgcell" );	
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgndx,		fcuda.szPnts * sizeof(uint)),		    "Malloc mgndx" );	
+	cudaCheck ( cudaMalloc ( (void**) &fbuf.mclr,		fcuda.szPnts * sizeof(uint) ),	        "Malloc mclr" );	
 	//cudaCheck ( cudaMalloc ( (void**) &fbuf.mcluster,	fcuda.szPnts*sizeof(uint) ) );	
 
     cudaCheck(cudaMalloc((void**)&fbuf.sfpos,           fcuda.szSfPnts * sizeof(float) * 3),    "Malloc sfpos");
@@ -305,6 +305,7 @@ void FluidParamCUDA ( float ss, float sr, float pr, float mass, float rest, floa
 	fcuda.AL2 			= al * al;
 	fcuda.VL 			= vl;
 	fcuda.VL2 			= vl * vl;
+    fcuda.insertPos     = 0;
 
 	//app_printf ( "Bound Min: %f %f %f\n", bmin.x, bmin.y, bmin.z );
 	//app_printf ( "Bound Max: %f %f %f\n", bmax.x, bmax.y, bmax.z );
