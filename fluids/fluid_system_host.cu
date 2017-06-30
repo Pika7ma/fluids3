@@ -163,36 +163,37 @@ void computeNumBlocks (int numPnts, int maxThreads, int &numBlocks, int &numThre
 
 void FluidClearCUDA ()
 {
-	cudaCheck ( cudaFree ( fbuf.mpos ),			"Free mpos" );	
-	cudaCheck ( cudaFree ( fbuf.mvel ),			"Free mvel" );	
-	cudaCheck ( cudaFree ( fbuf.mveleval ),		"Free mveleval" );	
-	cudaCheck ( cudaFree ( fbuf.mforce ),		"Free mforce" );	
-	cudaCheck ( cudaFree ( fbuf.mpress ),		"Free mpress");	
-	cudaCheck ( cudaFree ( fbuf.mdensity ),		"Free mdensity" );		
-	cudaCheck ( cudaFree ( fbuf.mgcell ),		"Free mgcell" );	
-	cudaCheck ( cudaFree ( fbuf.mgndx ),		"Free mgndx" );	
-	cudaCheck ( cudaFree ( fbuf.mclr ),			"Free mclr" );	
-	//cudaCheck ( cudaFree ( fbuf.mcluster ) );	
-
-	cudaCheck ( cudaFree ( fbuf.msortbuf ),		"Free msortbuf" );	
-
-	cudaCheck ( cudaFree ( fbuf.mgrid ),		"Free mgrid" );
-	cudaCheck ( cudaFree ( fbuf.mgridcnt ),		"Free mgridcnt" );
-	cudaCheck ( cudaFree ( fbuf.mgridoff ),		"Free mgridoff" );
-	cudaCheck ( cudaFree ( fbuf.mgridactive ),	"Free mgridactive" );
-
-    cudaCheck(cudaFree(fbuf.sfpos),         "Free sfdpos");
-    cudaCheck(cudaFree(fbuf.sfvel),         "Free sfvel");
-    cudaCheck(cudaFree(fbuf.sfveleval),     "Free sfveleval");
-    cudaCheck(cudaFree(fbuf.sfforce),       "Free sfforce");
-    cudaCheck(cudaFree(fbuf.sfpress),       "Free sfpress");
-    cudaCheck(cudaFree(fbuf.sfdensity),     "Free sfdensity");
-    cudaCheck(cudaFree(fbuf.sfgcell),       "Free sfgcell");
-    cudaCheck(cudaFree(fbuf.sfgndx),        "Free sfgndx");
-    cudaCheck(cudaFree(fbuf.sfclr),         "Free sfclr");
+    cudaCheck(cudaFree(fbuf.mpos),        "Free mpos");
+    cudaCheck(cudaFree(fbuf.mvel),        "Free mvel");
+    cudaCheck(cudaFree(fbuf.mveleval),    "Free mveleval");
+    cudaCheck(cudaFree(fbuf.mforce),      "Free mforce");
+    cudaCheck(cudaFree(fbuf.mpress),      "Free mpress");
+    cudaCheck(cudaFree(fbuf.mdensity),    "Free mdensity");
+    cudaCheck(cudaFree(fbuf.mgcell),      "Free mgcell");
+    cudaCheck(cudaFree(fbuf.mgndx),       "Free mgndx");
+    cudaCheck(cudaFree(fbuf.mclr),        "Free mclr");
     //cudaCheck ( cudaFree ( fbuf.mcluster ) );	
 
-    cudaCheck(cudaFree(fbuf.sfsortbuf),     "Free sfsortbuf");
+    cudaCheck(cudaFree(fbuf.msortbuf),    "Free msortbuf");
+
+    cudaCheck(cudaFree(fbuf.mgrid),       "Free mgrid");
+    cudaCheck(cudaFree(fbuf.mgridcnt),    "Free mgridcnt");
+    cudaCheck(cudaFree(fbuf.mgridoff),    "Free mgridoff");
+    cudaCheck(cudaFree(fbuf.mgridactive), "Free mgridactive");
+
+    cudaCheck(cudaFree(fbuf.sfpos),       "Free sfdpos");
+    cudaCheck(cudaFree(fbuf.sfvel),       "Free sfvel");
+    cudaCheck(cudaFree(fbuf.sfveleval),   "Free sfveleval");
+    cudaCheck(cudaFree(fbuf.sfforce),     "Free sfforce");
+    cudaCheck(cudaFree(fbuf.sfpress),     "Free sfpress");
+    cudaCheck(cudaFree(fbuf.sfdensity),   "Free sfdensity");
+    cudaCheck(cudaFree(fbuf.sfgcell),     "Free sfgcell");
+    cudaCheck(cudaFree(fbuf.sfgndx),      "Free sfgndx");
+    cudaCheck(cudaFree(fbuf.sfclr),       "Free sfclr");
+    cudaCheck(cudaFree(fbuf.sfexist),     "Free sfexist");
+    //cudaCheck ( cudaFree ( fbuf.mcluster ) );	
+
+    cudaCheck(cudaFree(fbuf.sfsortbuf),   "Free sfsortbuf");
 }
 
 
@@ -240,37 +241,42 @@ void FluidSetupCUDA(int num, int gsrch, int3 res, float3 size, float3 delta, flo
 	app_printf ( "  Pnts: %d, t:%dx%d=%d, Size:%d\n", fcuda.pnum, fcuda.numBlocks, fcuda.numThreads, fcuda.numBlocks*fcuda.numThreads, fcuda.szPnts);
     app_printf ( "  Grid: %d, t:%dx%d=%d, bufGrid:%d, Res: %dx%dx%d\n", fcuda.gridTotal, fcuda.gridBlocks, fcuda.gridThreads, fcuda.gridBlocks*fcuda.gridThreads, fcuda.szGrid, (int) fcuda.gridRes.x, (int) fcuda.gridRes.y, (int) fcuda.gridRes.z );		
 	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mpos,		fcuda.szPnts * sizeof(float) * 3 ),	    "Malloc mpos" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mvel,		fcuda.szPnts * sizeof(float) * 3 ),	    "Malloc mvel" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mveleval,	fcuda.szPnts * sizeof(float) * 3 ),	    "Malloc mveleval" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mforce,	    fcuda.szPnts * sizeof(float) * 3 ),	    "Malloc mforce" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mpress,	    fcuda.szPnts * sizeof(float)),	        "Malloc mpress" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mdensity,	fcuda.szPnts * sizeof(float)),	        "Malloc mdensity" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgcell,	    fcuda.szPnts * sizeof(uint)),	        "Malloc mgcell" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgndx,		fcuda.szPnts * sizeof(uint)),		    "Malloc mgndx" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mclr,		fcuda.szPnts * sizeof(uint) ),	        "Malloc mclr" );	
-	//cudaCheck ( cudaMalloc ( (void**) &fbuf.mcluster,	fcuda.szPnts*sizeof(uint) ) );	
+    cudaCheck(cudaMalloc((void**)&fbuf.mpos,        fcuda.szPnts * sizeof(float) * 3),   "Malloc mpos");
+    cudaCheck(cudaMalloc((void**)&fbuf.mvel,        fcuda.szPnts * sizeof(float) * 3),   "Malloc mvel");
+    cudaCheck(cudaMalloc((void**)&fbuf.mveleval,    fcuda.szPnts * sizeof(float) * 3),   "Malloc mveleval");
+    cudaCheck(cudaMalloc((void**)&fbuf.mforce,      fcuda.szPnts * sizeof(float) * 3),   "Malloc mforce");
+    cudaCheck(cudaMalloc((void**)&fbuf.mpress,      fcuda.szPnts * sizeof(float)),       "Malloc mpress");
+    cudaCheck(cudaMalloc((void**)&fbuf.mdensity,    fcuda.szPnts * sizeof(float)),       "Malloc mdensity");
+    cudaCheck(cudaMalloc((void**)&fbuf.mgcell,      fcuda.szPnts * sizeof(uint)),        "Malloc mgcell");
+    cudaCheck(cudaMalloc((void**)&fbuf.mgndx,       fcuda.szPnts * sizeof(uint)),        "Malloc mgndx");
+    cudaCheck(cudaMalloc((void**)&fbuf.mclr,        fcuda.szPnts * sizeof(uint)),        "Malloc mclr");
+    //cudaCheck( cudaMalloc ( (void**) &fbuf.mcluster,	fcuda.szPnts*sizeof(uint) ) );	
 
-    cudaCheck(cudaMalloc((void**)&fbuf.sfpos,           fcuda.szSfPnts * sizeof(float) * 3),    "Malloc sfpos");
-    cudaCheck(cudaMalloc((void**)&fbuf.sfvel,           fcuda.szSfPnts * sizeof(float) * 3),    "Malloc sfvel");
-    cudaCheck(cudaMalloc((void**)&fbuf.sfveleval,       fcuda.szSfPnts * sizeof(float) * 3),    "Malloc sfveleval");
-    cudaCheck(cudaMalloc((void**)&fbuf.sfforce,         fcuda.szSfPnts * sizeof(float) * 3),    "Malloc sfforce");
-    cudaCheck(cudaMalloc((void**)&fbuf.sfpress,         fcuda.szSfPnts * sizeof(float)),        "Malloc sfpress");
-    cudaCheck(cudaMalloc((void**)&fbuf.sfdensity,       fcuda.szSfPnts * sizeof(float)),        "Malloc sfdensity");
-    cudaCheck(cudaMalloc((void**)&fbuf.sfgcell,         fcuda.szSfPnts * sizeof(uint)),         "Malloc sfgcell");
-    cudaCheck(cudaMalloc((void**)&fbuf.sfgndx,          fcuda.szSfPnts * sizeof(uint)),         "Malloc sfgndx");
-    cudaCheck(cudaMalloc((void**)&fbuf.sfclr,           fcuda.szSfPnts * sizeof(uint)),         "Malloc sfclr");
-    cudaCheck(cudaMalloc((void**)&fbuf.sfexist,         fcuda.szSfPnts * sizeof(uint)),         "Malloc sfexist");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfpos,       fcuda.szSfPnts * sizeof(float) * 3), "Malloc sfpos");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfvel,       fcuda.szSfPnts * sizeof(float) * 3), "Malloc sfvel");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfveleval,   fcuda.szSfPnts * sizeof(float) * 3), "Malloc sfveleval");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfforce,     fcuda.szSfPnts * sizeof(float) * 3), "Malloc sfforce");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfpress,     fcuda.szSfPnts * sizeof(float)),     "Malloc sfpress");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfdensity,   fcuda.szSfPnts * sizeof(float)),     "Malloc sfdensity");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfgcell,     fcuda.szSfPnts * sizeof(uint)),      "Malloc sfgcell");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfgndx,      fcuda.szSfPnts * sizeof(uint)),      "Malloc sfgndx");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfclr,       fcuda.szSfPnts * sizeof(uint)),      "Malloc sfclr");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfexist,     fcuda.szSfPnts * sizeof(uint)),      "Malloc sfexist");
 
-	int temp_size = 4*(sizeof(float)*3) + 2*sizeof(float) + 2*sizeof(int) + sizeof(uint);
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.msortbuf,	fcuda.szPnts*temp_size ),		"Malloc msortbuf" );
+    int temp_size = 4 * (sizeof(float) * 3) + 2 * sizeof(float) + 2 * sizeof(int) + sizeof(uint);
+    cudaCheck(cudaMalloc((void**)&fbuf.msortbuf,    fcuda.szPnts*temp_size),             "Malloc msortbuf");
 
-	// Allocate grid
-	fcuda.szGrid = (fcuda.gridBlocks * fcuda.gridThreads);  
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgrid,		    fcuda.szPnts*sizeof(int) ),	"Malloc mgrid" );
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridcnt,	    fcuda.szGrid*sizeof(int) ),	"Malloc mgridcnt" );
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridoff,	    fcuda.szGrid*sizeof(int) ),	"Malloc mgridoff" );
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridactive,    fcuda.szGrid*sizeof(int) ),	"Malloc mgridactive" );
+    // Allocate grid
+    fcuda.szGrid = (fcuda.gridBlocks * fcuda.gridThreads);
+    cudaCheck(cudaMalloc((void**)&fbuf.mgrid,       fcuda.szPnts * sizeof(int)),         "Malloc mgrid");
+    cudaCheck(cudaMalloc((void**)&fbuf.mgridcnt,    fcuda.szGrid * sizeof(int)),         "Malloc mgridcnt");
+    cudaCheck(cudaMalloc((void**)&fbuf.mgridoff,    fcuda.szGrid * sizeof(int)),         "Malloc mgridoff");
+    cudaCheck(cudaMalloc((void**)&fbuf.mgridactive, fcuda.szGrid * sizeof(int)),         "Malloc mgridactive");
+
+    cudaCheck(cudaMalloc((void**)&fbuf.sfgrid, fcuda.szSfPnts * sizeof(int)), "Malloc sfgrid");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfgridcnt, fcuda.szGrid * sizeof(int)), "Malloc sfgridcnt");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfgridoff, fcuda.szGrid * sizeof(int)), "Malloc sfgridoff");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfgridactive, fcuda.szGrid * sizeof(int)), "Malloc sfgridactive");
 		
 	// Transfer sim params to device
 	updateSimParams ( &fcuda );
@@ -305,7 +311,8 @@ void FluidParamCUDA ( float ss, float sr, float pr, float mass, float rest, floa
 	fcuda.AL2 			= al * al;
 	fcuda.VL 			= vl;
 	fcuda.VL2 			= vl * vl;
-    fcuda.insertPos     = 0;
+    fcuda.goodsfnum     = -1;
+    fbuf.insertPos      = -1;
 
 	//app_printf ( "Bound Min: %f %f %f\n", bmin.x, bmin.y, bmin.z );
 	//app_printf ( "Bound Max: %f %f %f\n", bmax.x, bmax.y, bmax.z );
@@ -338,6 +345,20 @@ void CopyToCUDA ( float* pos, float* vel, float* veleval, float* force, float* p
     cudaCheck(cudaMemcpy(fbuf.mclr,     clr,        numPoints * sizeof(uint),       cudaMemcpyHostToDevice), "Memcpy mclr ToDev");
 
 	cudaThreadSynchronize ();	
+}
+
+void SfCopyToCUDA(float* pos, float* vel, float* veleval, float* force, float* pressure, float* density, uint* cluster, uint* gnext, char* clr) {
+    // Send particle buffers
+    int numPoints = fcuda.sfnum;
+    cudaCheck(cudaMemcpy(fbuf.sfpos, pos, numPoints * sizeof(float) * 3, cudaMemcpyHostToDevice),         "Memcpy sfpos ToDev");
+    cudaCheck(cudaMemcpy(fbuf.sfvel, vel, numPoints * sizeof(float) * 3, cudaMemcpyHostToDevice),         "Memcpy sfvel ToDev");
+    cudaCheck(cudaMemcpy(fbuf.sfveleval, veleval, numPoints * sizeof(float) * 3, cudaMemcpyHostToDevice), "Memcpy sfveleval ToDev");
+    cudaCheck(cudaMemcpy(fbuf.sfforce, force, numPoints * sizeof(float) * 3, cudaMemcpyHostToDevice),     "Memcpy sfforce ToDev");
+    cudaCheck(cudaMemcpy(fbuf.sfpress, pressure, numPoints * sizeof(float), cudaMemcpyHostToDevice),      "Memcpy sfpress ToDev");
+    cudaCheck(cudaMemcpy(fbuf.sfdensity, density, numPoints * sizeof(float), cudaMemcpyHostToDevice),     "Memcpy sfdensity ToDev");
+    cudaCheck(cudaMemcpy(fbuf.sfclr, clr, numPoints * sizeof(uint), cudaMemcpyHostToDevice),              "Memcpy sfclr ToDev");
+
+    cudaThreadSynchronize();
 }
 
 void CopyFromCUDA ( float* pos, float* vel, float* veleval, float* force, float* pressure, float* density, uint* cluster, uint* gnext, char* clr )
@@ -420,6 +441,15 @@ void CountingSortFullCUDA ( uint* ggrid )
 
 	countingSortFull <<< fcuda.numBlocks, fcuda.numThreads>>> ( fbuf, fcuda.pnum );		
 	cudaThreadSynchronize ();
+}
+
+void InsertFineParticlesCUDA() {
+    insertFineParticles <<< fcuda.numBlocks, fcuda.numThreads >>> (fbuf, fcuda.pnum);
+    cudaError_t error = cudaGetLastError();
+    if (error != cudaSuccess) {
+        fprintf(stderr, "CUDA ERROR: InsertFineParticlesCUDA: %s\n", cudaGetErrorString(error));
+    }
+    cudaThreadSynchronize();
 }
 
 void ComputePressureCUDA ()

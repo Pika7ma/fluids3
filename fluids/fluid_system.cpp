@@ -161,11 +161,13 @@ void FluidSystem::Setup(bool bStart)
 
     SetupGridAllocate(m_Vec[PVOLMIN], m_Vec[PVOLMAX], m_Param[PSIMSCALE], m_Param[PGRIDSIZE], 1.0);	// Setup grid
 
+    SetupSurfaceGridAllocate(m_Vec[PVOLMIN], m_Vec[PVOLMAX], m_Param[PSIMSCALE], m_Param[PGRIDSIZE], 1.0);
+
     #ifdef BUILD_CUDA
 
         FluidClearCUDA();
 
-        //Sleep(500);
+        Sleep(500);
 
         FluidSetupCUDA(
             NumPoints(),
@@ -180,7 +182,7 @@ void FluidSystem::Setup(bool bStart)
             NumSfPoints()
         );
 
-        //Sleep(500);
+        Sleep(500);
 
         Vector3DF grav = m_Vec[PPLANE_GRAV_DIR];
         FluidParamCUDA(
@@ -207,6 +209,13 @@ void FluidSystem::Setup(bool bStart)
         );
 
         TransferToCUDA();		// Initial transfer
+        
+        if (!bStart) {
+            //system("pause");
+            int insertPos = -1;
+            InsertFineParticlesCUDA();
+
+        }
 
     #endif
 }
@@ -1236,8 +1245,8 @@ void FluidSystem::SetupGridAllocate ( Vector3DF min, Vector3DF max, float sim_sc
 	// Number of cells to search:
 	// n = (2r / w) +1,  where n = 1D cell search count, r = search radius, w = world cell width
 	//
-	m_GridSrch =  floor(2*(m_Param[PSMOOTHRADIUS]/sim_scale) / world_cellsize) + 1;
-	if ( m_GridSrch < 2 ) m_GridSrch = 2;
+    m_GridSrch = floor(2 * (m_Param[PSMOOTHRADIUS] / sim_scale) / world_cellsize) + 1;
+    if (m_GridSrch < 2) m_GridSrch = 2;
 	m_GridAdjCnt = m_GridSrch * m_GridSrch * m_GridSrch ;			// 3D search count = n^3, e.g. 2x2x2=8, 3x3x3=27, 4x4x4=64
 
 	if ( m_GridSrch > 6 ) {
@@ -1262,6 +1271,67 @@ void FluidSystem::SetupGridAllocate ( Vector3DF min, Vector3DF max, float sim_sc
 	mPackGrid = (int*) malloc ( sizeof(int) * m_GridTotal );
 
 	
+}
+
+void FluidSystem::SetupSurfaceGridAllocate(Vector3DF min, Vector3DF max, float sim_scale, float cell_size, float border) {
+    float world_cellsize = cell_size / sim_scale; // M: World Cell Size | illustrates the length of each cell in a real world
+
+    sf_GridMin    = min;
+    sf_GridMax    = max;
+    sf_GridSize   = sf_GridMax - sf_GridMin; // M: Grid Size (x, y, z) | refers to the length of each coordinates in a real world
+    sf_GridRes.x  = ceil(sf_GridSize.x / world_cellsize);   // Determine grid resolution
+    sf_GridRes.y  = ceil(sf_GridSize.y / world_cellsize);
+    sf_GridRes.z  = ceil(sf_GridSize.z / world_cellsize);   // M: Grid Resolution (x, y, z) | refers to # of cells within each coordinates in the simulation
+    sf_GridSize.x = sf_GridRes.x * cell_size / sim_scale; // Adjust grid size to multiple of cell size
+    sf_GridSize.y = sf_GridRes.y * cell_size / sim_scale;
+    sf_GridSize.z = sf_GridRes.z * cell_size / sim_scale; // M: Grid Size (x, y, z) | 
+                                                        // M: Since then, the grid size(real world) has been multiple of cell size(real world)
+    sf_GridDelta  = sf_GridRes;    // delta = translate from world space to cell #
+    sf_GridDelta /= sf_GridSize;
+
+    sf_GridTotal = (int)(sf_GridRes.x * sf_GridRes.y * sf_GridRes.z);
+    //app_printf("%d %d\n", sf_GridTotal, mNumPoints);
+    //system("pause");
+
+    // Allocate grid
+    if (sf_Grid != 0x0) free(sf_Grid);
+    if (sf_GridCnt != 0x0) free(sf_GridCnt);
+    sf_Grid = (uint*)malloc(sizeof(uint*) * sf_GridTotal);
+    sf_GridCnt = (uint*)malloc(sizeof(uint*) * sf_GridTotal);
+    memset(sf_Grid, GRID_UCHAR, sf_GridTotal * sizeof(uint));
+    memset(sf_GridCnt, GRID_UCHAR, sf_GridTotal * sizeof(uint));
+
+    m_Param[PSTAT_GMEM] = 12 * sf_GridTotal;		// Grid memory used
+
+    // Number of cells to search:
+    // n = (2r / w) +1,  where n = 1D cell search count, r = search radius, w = world cell width
+    //
+    sf_GridSrch = floor(2 * (m_Param[PSMOOTHRADIUS] / sim_scale) / world_cellsize) + 1;
+    if (sf_GridSrch < 2) sf_GridSrch = 2;
+    sf_GridAdjCnt = sf_GridSrch * sf_GridSrch * sf_GridSrch;	// 3D search count = n^3, e.g. 2x2x2=8, 3x3x3=27, 4x4x4=64
+
+    if (sf_GridSrch > 6) {
+        app_printf("ERROR: Neighbor search is n > 6. \n ");
+        exit(-1);
+    }
+
+
+    int cell = 0;
+    for (int y = 0; y < sf_GridSrch; y++)
+        for (int z = 0; z < sf_GridSrch; z++)
+            for (int x = 0; x < sf_GridSrch; x++)
+                sf_GridAdj[cell++] = (y * sf_GridRes.z + z) * sf_GridRes.x + x;			// -1 compensates for ndx 0=empty
+
+
+    app_printf("Surface Adjacency table (CPU) \n");
+    for (int n = 0; n < sf_GridAdjCnt; n++) {
+        app_printf("  ADJ: %d, %d\n", n, sf_GridAdj[n]);
+    }
+
+    if (sfPackGrid != 0x0) free(sfPackGrid);
+    sfPackGrid = (int*)malloc(sizeof(int) * sf_GridTotal);
+
+
 }
 
 int FluidSystem::getGridCell ( int p, Vector3DI& gc )
@@ -1767,9 +1837,7 @@ void FluidSystem::DrawCell ( int gx, int gy, int gz )
 
 void FluidSystem::DrawGrid ()
 {
-	Vector3DF gd (1, 1, 1);
 	Vector3DF gc;
-	gd /= m_GridDelta;		
 	
 	glBegin ( GL_LINES );	
 	for (int z=0; z <= m_GridRes.z; z++ ) {
@@ -2560,7 +2628,7 @@ void FluidSystem::SetupExampleParams ( bool bStart )
 	// Load scene from XML file
 	int cnt = ParseXML ( "Scene", (int) m_Param[PEXAMPLE], bStart );
 
-    m_Param[SFNUM] = 2 * m_Param[PNUM];
+    m_Param[SFNUM] = m_Param[PNUM];
 }
 
 void FluidSystem::SetupSpacing ()

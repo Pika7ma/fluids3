@@ -69,6 +69,11 @@
 		int*			mgridoff;
 		int*			mgridactive;
 
+        uint*			sfgrid;
+        int*			sfgridcnt;   // M: grid's property, indicates the number of particles in this grid cell
+        int*			sfgridoff;
+        int*			sfgridactive;
+
         float3*         sfpos;
         float3*			sfvel;
         float3*			sfveleval;
@@ -83,18 +88,20 @@
         uint*			sfcluster;
 
         char*			sfsortbuf;
+
+        int             insertPos;
 	};
 
 	// Temporary sort buffer offsets
 	#define BUF_POS			0
 	#define BUF_VEL			(sizeof(float3))
-	#define BUF_VELEVAL		(BUF_VEL + sizeof(float3))
+	#define BUF_VELEVAL		(BUF_VEL     + sizeof(float3))
 	#define BUF_FORCE		(BUF_VELEVAL + sizeof(float3))
-	#define BUF_PRESS		(BUF_FORCE + sizeof(float3))
-	#define BUF_DENS		(BUF_PRESS + sizeof(float))
-	#define BUF_GCELL		(BUF_DENS + sizeof(float))
-	#define BUF_GNDX		(BUF_GCELL + sizeof(uint))
-	#define BUF_CLR			(BUF_GNDX + sizeof(uint))
+	#define BUF_PRESS		(BUF_FORCE   + sizeof(float3))
+	#define BUF_DENS		(BUF_PRESS   + sizeof(float))
+	#define BUF_GCELL		(BUF_DENS    + sizeof(float))
+	#define BUF_GNDX		(BUF_GCELL   + sizeof(uint))
+	#define BUF_CLR			(BUF_GNDX    + sizeof(uint))
 
 	// Fluid Parameters (stored on both host and device)
 	struct FluidParams {
@@ -122,7 +129,7 @@
         int3			gridRes, gridScanMax;
         int				gridSrch, gridTotal, gridAdjCnt, gridActive;
 
-        int             insertPos;
+        int             goodsfnum;
 
         int				gridAdj[64];
 	};
@@ -145,6 +152,7 @@
 		__global__ void computeForce ( bufList buf, int pnum );
 		__global__ void computePressureGroup ( bufList buf, int pnum );
 		__global__ void advanceParticles ( float time, float dt, float ss, bufList buf, int numPnts );
+        __global__ void insertFineParticles(bufList buf, int pnum);
 
 		//__global__ void countActiveCells ( bufList buf, int pnum );			//T: useless
 

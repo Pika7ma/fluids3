@@ -365,10 +365,10 @@
 		uint*					m_Grid;
 		uint*					m_GridCnt;
 		int						m_GridTotal;			// total # cells
-		Vector3DI				m_GridRes;				// resolution in each axis
+		Vector3DI				m_GridRes;				// resolution in each axis (# of grid)
 		Vector3DF				m_GridMin;				// volume of grid (may not match domain volume exactly)
 		Vector3DF				m_GridMax;		
-		Vector3DF				m_GridSize;				// physical size in each axis
+		Vector3DF				m_GridSize;				// physical size in each axis (length of all grid) size = delta * res
 		Vector3DF				m_GridDelta;
 		int						m_GridSrch;
 		int						m_GridAdjCnt;
@@ -401,6 +401,7 @@
 
 		char*					mPackBuf;
 		int*					mPackGrid;
+        int*                    sfPackGrid;
 
 		int						mVBO[3];
 

@@ -571,14 +571,14 @@ __global__ void advanceParticles(float time, float dt, float ss, bufList buf, in
     // Ocean colors
     if (speed > simData.VL2*0.2) {
         adj = simData.VL2*0.2;
-        buf.mclr[i] += ((buf.mclr[i] & 0xFF) < 0xFD) ? +0x00000002 : 0;		// decrement R by one
-        buf.mclr[i] += (((buf.mclr[i] >> 8) & 0xFF) < 0xFD) ? +0x00000200 : 0;	// decrement G by one
-        buf.mclr[i] += (((buf.mclr[i] >> 16) & 0xFF) < 0xFD) ? +0x00020000 : 0;	// decrement G by one
+        buf.mclr[i] += ((buf.mclr[i] & 0xFF)         < 0xFD) ? +0x00000002 : 0;		    // decrement R by one
+        buf.mclr[i] += (((buf.mclr[i] >> 8) & 0xFF)  < 0xFD) ? +0x00000200 : 0;	        // decrement G by one
+        buf.mclr[i] += (((buf.mclr[i] >> 16) & 0xFF) < 0xFD) ? +0x00020000 : 0;	        // decrement G by one
     }
     if (speed < 0.03) {
         int v = int(speed / .01) + 1;
-        buf.mclr[i] += ((buf.mclr[i] & 0xFF) > 0x80) ? -0x00000001 * v : 0;		// decrement R by one
-        buf.mclr[i] += (((buf.mclr[i] >> 8) & 0xFF) > 0x80) ? -0x00000100 * v : 0;	// decrement G by one
+        buf.mclr[i] += ((buf.mclr[i] & 0xFF)        > 0x80) ? -0x00000001 * v : 0;		// decrement R by one
+        buf.mclr[i] += (((buf.mclr[i] >> 8) & 0xFF) > 0x80) ? -0x00000100 * v : 0;	    // decrement G by one
     }
 
     //-- surface particle density 
@@ -586,10 +586,10 @@ __global__ void advanceParticles(float time, float dt, float ss, bufList buf, in
     //if ( buf.mdensity[i] > 0.0014 ) buf.mclr[i] += 0xAA000000;
 
     // Leap-frog Integration
-    float3 vnext = accel*dt + vel;				// v(t+1/2) = v(t-1/2) + a(t) dt		
+    float3 vnext    = accel*dt + vel;				// v(t+1/2) = v(t-1/2) + a(t) dt		
     buf.mveleval[i] = (vel + vnext) * 0.5;		// v(t+1) = [v(t-1/2) + v(t+1/2)] * 0.5			
-    buf.mvel[i] = vnext;
-    buf.mpos[i] += vnext * (dt / ss);						// p(t+1) = p(t) + v(t+1/2) dt		
+    buf.mvel[i]     = vnext;
+    buf.mpos[i]    += vnext * (dt / ss);						// p(t+1) = p(t) + v(t+1/2) dt		
 }
 
 
@@ -607,4 +607,69 @@ void updateSimParams(FluidParams* cpufp) {
     /*app_printf ( "SIM PARAMETERS:\n" );
     app_printf ( "  CPU: %p\n", cpufp );
     app_printf ( "  GPU: %p\n", &simData );	 */
+}
+
+__global__ void insertFineParticles(bufList buf, int pnum) {
+    uint i = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
+    if (i >= pnum) { return; }
+
+    register int nadj = (1 * simData.gridRes.z + 1) * simData.gridRes.x + 1; // Center of neighbor cells
+    register uint gc = buf.mgcell[i];    // Grid index of central coarse particle
+    if (gc == GRID_UNDEF) { return; }
+    gc -= nadj;
+
+    register float3 pos = buf.mpos[i];   // Central coarse particle position
+    register float3 gridDelta = simData.gridDelta;
+    register float sqlamdac = gridDelta.x * gridDelta.x + gridDelta.y * gridDelta.y + gridDelta.z * gridDelta.z;
+
+    pos -= gridDelta;   // First sampling position of central coarse particle
+    register int sampleNum = 1; // Sample number in one demension
+    register float sampleDelta = 2.0 / sampleNum;    // Sample distance interval
+
+    for (int i = 0; i <= sampleNum; ++i) {
+        for (int j = 0; j <= sampleNum; ++j) {
+            for (int k = 0; k <= sampleNum; ++k) {
+
+                bool isFineParticle = true;
+
+                float3 finePos = pos + make_float3(
+                    i * sampleDelta * gridDelta.x,
+                    j * sampleDelta * gridDelta.y,
+                    k * sampleDelta * gridDelta.z);
+
+                // Try sample
+
+                for (int c = 0; isFineParticle && c < simData.gridAdjCnt; c++) {    // For all neighbor grid
+                    uint neighbor_gc = gc + simData.gridAdj[c];     // Current neighbor grid position
+                    int cfirst = buf.mgridoff[neighbor_gc];         // First neighbor coarse particle in this grid
+                    int clast = cfirst + buf.mgridcnt[neighbor_gc]; // Last neighbor coarse particle in this grid
+
+                    float3 dist;    // 3D distance between fine particle and neighbor coarse particle
+                    float dsq;      // distance^2
+
+                    for (int cndx = cfirst; cndx < clast; ++cndx) { // Sample sampleNum^3 points uniformly around central coarse particle
+                        dist = finePos - buf.mpos[buf.mgrid[cndx]];
+                        dsq = (dist.x * dist.x + dist.y * dist.y + dist.z * dist.z);
+                        if (dsq < sqlamdac) { // Dont sample at this point (lambda_c = grid size = gridDelta)
+                            isFineParticle = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (isFineParticle) {
+                    int index = ++buf.insertPos;
+                    if (index > simData.sfnum) { return; }
+                    *(buf.sfexist + index)   = 1;
+                    *(buf.sfpos + index)     = finePos;
+                    *(buf.sfvel + index)     = make_float3(0, 0, 0);
+                    *(buf.sfveleval + index) = make_float3(0, 0, 0);
+                    *(buf.sfforce + index)   = make_float3(0, 0, 0);
+                    *(buf.sfpress + index)   = 0;
+                    *(buf.sfdensity + index) = 0;
+                }
+
+            }
+        }
+    }
 }

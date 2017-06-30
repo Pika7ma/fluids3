@@ -87,6 +87,7 @@
 	void ComputePressureCUDA ();
 	//void ComputeQueryCUDA ();						//T: useless
 	void ComputeForceCUDA ();	
+    void InsertFineParticlesCUDA();
 	
 	//void CountActiveCUDA ();						// Clustering method (shared mem)		//T: useless
 	void ComputePressureGroupCUDA ();				// Clustering method (shared mem)
