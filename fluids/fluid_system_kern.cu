@@ -658,15 +658,15 @@ __global__ void insertFineParticles(bufList buf, int pnum) {
                 }
 
                 if (isFineParticle) {
-                    int index = ++buf.insertPos;
-                    if (index > simData.sfnum) { return; }
-                    *(buf.sfexist + index)   = 1;
-                    *(buf.sfpos + index)     = finePos;
-                    *(buf.sfvel + index)     = make_float3(0, 0, 0);
-                    *(buf.sfveleval + index) = make_float3(0, 0, 0);
-                    *(buf.sfforce + index)   = make_float3(0, 0, 0);
-                    *(buf.sfpress + index)   = 0;
-                    *(buf.sfdensity + index) = 0;
+                    atomicAdd(&buf.insertPos, 1);
+                    //if (index > simData.sfnum) { return; }
+                    //*(buf.sfexist   + index)     = 1;
+                    //*(buf.sfpos     + index)     = finePos;
+                    //*(buf.sfvel     + index)     = make_float3(0, 0, 0);
+                    //*(buf.sfveleval + index)     = make_float3(0, 0, 0);
+                    //*(buf.sfforce   + index)     = make_float3(0, 0, 0);
+                    //*(buf.sfpress   + index)     = 0;
+                    //*(buf.sfdensity + index)     = 0;
                 }
 
             }

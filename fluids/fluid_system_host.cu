@@ -129,26 +129,38 @@ void cudaInit()
 	cudaCheck ( cudaMalloc ( (void**) &mcuda, sizeof(FluidParams) ),		"Malloc FluidParams mcuda" );
 
 	// Allocate particle buffers
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mpos, sizeof(float)*3 ),		"Malloc mpos" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mvel, sizeof(float)*3),			"Malloc mvel" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mveleval, sizeof(float)*3),		"Malloc mveleval"  );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mforce, sizeof(float)*3),		"Malloc mforce"  );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mpress, sizeof(float) ),		"Malloc mpress"  );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mdensity, sizeof(float) ),		"Malloc mdensity"  );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgcell, sizeof(uint)),			"Malloc mgcell"  );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgndx, sizeof(uint)),			"Malloc mgndx"  );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mclr, sizeof(uint)),			"Malloc mclr"  );	
+    cudaCheck(cudaMalloc((void**)&fbuf.mpos,     sizeof(float) * 3), "Malloc mpos");
+    cudaCheck(cudaMalloc((void**)&fbuf.mvel,     sizeof(float) * 3), "Malloc mvel");
+    cudaCheck(cudaMalloc((void**)&fbuf.mveleval, sizeof(float) * 3), "Malloc mveleval");
+    cudaCheck(cudaMalloc((void**)&fbuf.mforce,   sizeof(float) * 3), "Malloc mforce");
+    cudaCheck(cudaMalloc((void**)&fbuf.mpress,   sizeof(float)),     "Malloc mpress");
+    cudaCheck(cudaMalloc((void**)&fbuf.mdensity, sizeof(float)),     "Malloc mdensity");
+    cudaCheck(cudaMalloc((void**)&fbuf.mgcell,   sizeof(uint)),      "Malloc mgcell");
+    cudaCheck(cudaMalloc((void**)&fbuf.mgndx,    sizeof(uint)),      "Malloc mgndx");
+    cudaCheck(cudaMalloc((void**)&fbuf.mclr,     sizeof(uint)),      "Malloc mclr");
 
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.msortbuf, sizeof(uint) ),		"Malloc msortbu" );	
+    cudaCheck(cudaMalloc((void**)&fbuf.sfpos,     sizeof(float) * 3), "Malloc sfpos");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfvel,     sizeof(float) * 3), "Malloc sfvel");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfveleval, sizeof(float) * 3), "Malloc sfveleval");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfforce,   sizeof(float) * 3), "Malloc sfforce");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfpress,   sizeof(float)),     "Malloc sfpress");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfdensity, sizeof(float)),     "Malloc sfdensity");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfgcell,   sizeof(uint)),      "Malloc sfgcell");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfgndx,    sizeof(uint)),      "Malloc sfgndx");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfclr,     sizeof(uint)),      "Malloc sfclr");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfexist,   sizeof(uint)),      "Malloc sfexist");
 
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgrid, 1 ),						"Malloc mgrid"  );
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridcnt, 1 ),					"Malloc mgridcnt"  );   
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridoff, 1 ),					"Malloc mgridoff" );	
-	cudaCheck ( cudaMalloc ( (void**) &fbuf.mgridactive, 1 ),				"Malloc mgridactive");
+    cudaCheck(cudaMalloc((void**)&fbuf.msortbuf,  sizeof(uint)),      "Malloc msortbu");
+
+    cudaCheck(cudaMalloc((void**)&fbuf.mgrid,       1), "Malloc mgrid");
+    cudaCheck(cudaMalloc((void**)&fbuf.mgridcnt,    1), "Malloc mgridcnt");
+    cudaCheck(cudaMalloc((void**)&fbuf.mgridoff,    1), "Malloc mgridoff");
+    cudaCheck(cudaMalloc((void**)&fbuf.mgridactive, 1), "Malloc mgridactive");
+
 
 	//cudaCheck ( cudaMalloc ( (void**) &fbuf.mcluster, sizeof(uint) ) );	
 
-	preallocBlockSumsInt ( 1 );
+	preallocBlockSumsInt(1);
 };
 	
 // Compute number of blocks to create
@@ -311,8 +323,6 @@ void FluidParamCUDA ( float ss, float sr, float pr, float mass, float rest, floa
 	fcuda.AL2 			= al * al;
 	fcuda.VL 			= vl;
 	fcuda.VL2 			= vl * vl;
-    fcuda.goodsfnum     = -1;
-    fbuf.insertPos      = -1;
 
 	//app_printf ( "Bound Min: %f %f %f\n", bmin.x, bmin.y, bmin.z );
 	//app_printf ( "Bound Max: %f %f %f\n", bmax.x, bmax.y, bmax.z );

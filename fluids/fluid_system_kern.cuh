@@ -85,11 +85,9 @@
         uint*			sfclr;   // 4 byte color
         uint*           sfexist;
 
-        uint*			sfcluster;
-
         char*			sfsortbuf;
 
-        int             insertPos;
+        int*            sfgoodnum;
 	};
 
 	// Temporary sort buffer offsets
@@ -128,8 +126,6 @@
         float3			gridSize, gridDelta, gridMin, gridMax;
         int3			gridRes, gridScanMax;
         int				gridSrch, gridTotal, gridAdjCnt, gridActive;
-
-        int             goodsfnum;
 
         int				gridAdj[64];
 	};
