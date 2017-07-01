@@ -658,7 +658,7 @@ __global__ void insertFineParticles(bufList buf, int pnum) {
                 }
 
                 if (isFineParticle) {
-                    atomicAdd(&buf.insertPos, 1);
+                    //atomicAdd(&buf.insertPos, 1);
                     //if (index > simData.sfnum) { return; }
                     //*(buf.sfexist   + index)     = 1;
                     //*(buf.sfpos     + index)     = finePos;

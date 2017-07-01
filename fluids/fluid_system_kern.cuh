@@ -85,9 +85,11 @@
         uint*			sfclr;   // 4 byte color
         uint*           sfexist;
 
-        char*			sfsortbuf;
+        uint*			sfsortbuf;
 
-        int*            sfgoodnum;
+        uint*           sfgoodnum;
+
+
 	};
 
 	// Temporary sort buffer offsets
