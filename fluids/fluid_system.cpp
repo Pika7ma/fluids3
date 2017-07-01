@@ -209,10 +209,9 @@ void FluidSystem::Setup(bool bStart)
         );
 
         TransferToCUDA();		// Initial transfer
-        
+
         if (!bStart) {
             //system("pause");
-            int insertPos = -1;
             InsertFineParticlesCUDA();
 
         }

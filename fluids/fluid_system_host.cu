@@ -289,7 +289,7 @@ void FluidSetupCUDA(int num, int gsrch, int3 res, float3 size, float3 delta, flo
     cudaCheck(cudaMalloc((void**)&fbuf.msortbuf,    fcuda.szPnts*temp_size),             "Malloc msortbuf");
     cudaCheck(cudaMalloc((void**)&fbuf.sfsortbuf,   fcuda.szSfPnts*sf_temp_size),        "Malloc sfsortbuf");
 
-    cudaCheck(cudaMalloc((void**)&fbuf.sfgoodnum, sizeof(uint)), "Malloc sfgoodnum");
+    cudaCheck(cudaMalloc((void**)&fbuf.sfgoodnum,   sizeof(uint)),                       "Malloc sfgoodnum");
 
     // Allocate grid
     fcuda.szGrid = (fcuda.gridBlocks * fcuda.gridThreads);
@@ -302,7 +302,7 @@ void FluidSetupCUDA(int num, int gsrch, int3 res, float3 size, float3 delta, flo
     cudaCheck(cudaMalloc((void**)&fbuf.sfgridcnt,    fcuda.szGrid * sizeof(int)),   "Malloc sfgridcnt");
     cudaCheck(cudaMalloc((void**)&fbuf.sfgridoff,    fcuda.szGrid * sizeof(int)),   "Malloc sfgridoff");
     cudaCheck(cudaMalloc((void**)&fbuf.sfgridactive, fcuda.szGrid * sizeof(int)),   "Malloc sfgridactive");
-		
+
 	// Transfer sim params to device
 	updateSimParams ( &fcuda );
 	
@@ -366,6 +366,9 @@ void CopyToCUDA ( float* pos, float* vel, float* veleval, float* force, float* p
     cudaCheck(cudaMemcpy(fbuf.mpress,   pressure,   numPoints * sizeof(float),      cudaMemcpyHostToDevice), "Memcpy mpress ToDev");
     cudaCheck(cudaMemcpy(fbuf.mdensity, density,    numPoints * sizeof(float),      cudaMemcpyHostToDevice), "Memcpy mdensity ToDev");
     cudaCheck(cudaMemcpy(fbuf.mclr,     clr,        numPoints * sizeof(uint),       cudaMemcpyHostToDevice), "Memcpy mclr ToDev");
+
+    // Initialize sfgoodnum
+    cudaMemset(fbuf.sfgoodnum, 0, sizeof(uint));
 
 	cudaThreadSynchronize ();	
 }
@@ -467,6 +470,7 @@ void CountingSortFullCUDA ( uint* ggrid )
 }
 
 void InsertFineParticlesCUDA() {
+
     insertFineParticles <<< fcuda.numBlocks, fcuda.numThreads >>> (fbuf, fcuda.pnum);
     cudaError_t error = cudaGetLastError();
     if (error != cudaSuccess) {
