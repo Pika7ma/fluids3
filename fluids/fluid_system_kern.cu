@@ -623,7 +623,7 @@ __global__ void insertFineParticles(bufList buf, int pnum) {
     register float sqlamdac = gridDelta.x * gridDelta.x + gridDelta.y * gridDelta.y + gridDelta.z * gridDelta.z;
 
     pos -= gridDelta;   // First sampling position of central coarse particle
-    register int sampleNum = 1; // Sample number in one demension
+    register int sampleNum = 0; // Sample number in one demension
     register float sampleDelta = 2.0 / sampleNum;    // Sample distance interval
 
     for (int i = 0; i <= sampleNum; ++i) {

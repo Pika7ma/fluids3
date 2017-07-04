@@ -212,8 +212,10 @@ void FluidSystem::Setup(bool bStart)
 
         if (!bStart) {
             //system("pause");
-            InsertFineParticlesCUDA();
-
+            uint *gnum = new uint[1];
+            InsertFineParticlesCUDA(gnum);
+            app_printf("%u\n", *gnum);
+            system("pause");
         }
 
     #endif

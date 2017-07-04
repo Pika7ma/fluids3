@@ -469,7 +469,7 @@ void CountingSortFullCUDA ( uint* ggrid )
 	cudaThreadSynchronize ();
 }
 
-void InsertFineParticlesCUDA() {
+void InsertFineParticlesCUDA(uint* gnum) {
 
     insertFineParticles <<< fcuda.numBlocks, fcuda.numThreads >>> (fbuf, fcuda.pnum);
     cudaError_t error = cudaGetLastError();
@@ -477,6 +477,8 @@ void InsertFineParticlesCUDA() {
         fprintf(stderr, "CUDA ERROR: InsertFineParticlesCUDA: %s\n", cudaGetErrorString(error));
     }
     cudaThreadSynchronize();
+
+    cudaCheck(cudaMemcpy(gnum, fbuf.sfgoodnum, sizeof(uint), cudaMemcpyDeviceToHost), "Memcpy good FromDev");
 }
 
 void ComputePressureCUDA ()

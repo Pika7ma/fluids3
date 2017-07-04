@@ -282,7 +282,7 @@ void display ()
 	// Compute camera view
 	cam.updateMatricies ();
 	glMatrixMode ( GL_PROJECTION );
-	glLoadMatrixf ( cam.getProjMatrix().GetDataF() );
+    glLoadMatrixf ( cam.getProjMatrix().GetDataF() );
 	
 	// Draw 3D	
 	glEnable ( GL_LIGHTING );  
