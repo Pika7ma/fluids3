@@ -66,7 +66,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DebugGPU\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\output\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DebugGPU\</IntDir>
@@ -78,14 +78,14 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ReleaseGPU\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libs;$(IncludePath);C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libs;$(IncludePath);C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;$(ProjectDir)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\Codes\Libraries\trunk\combined\include;C:\ProgramData\NVIDIA Corporation\NVIDIA GPU Computing SDK 4.2\C\common\inc;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\include;C:\Program Files %28x86%29\NVIDIA Corporation\Cg\include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libs;$(LibraryPath);C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\Win32</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libs;$(LibraryPath);C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\Win32;$(ProjectDir)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\Codes\Libraries\trunk\combined\lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\lib\x64;C:\Program Files %28x86%29\NVIDIA Corporation\Cg\lib.x64;$(LibraryPath)</LibraryPath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\Codes\Libraries\trunk\combined\include;C:\ProgramData\NVIDIA Corporation\NVIDIA GPU Computing SDK 4.2\C\common\inc;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\include;C:\Program Files %28x86%29\NVIDIA Corporation\Cg\include;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\Codes\Libraries\trunk\combined\lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\lib\x64;C:\Program Files %28x86%29\NVIDIA Corporation\Cg\lib.x64;$(LibraryPath)</LibraryPath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">common;libs;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">libs;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\lib\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">common;libs;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\include;$(ProjectDir);$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">libs;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\lib\Win32;$(ProjectDir);$(LibraryPath)</LibraryPath>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)</TargetName>
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libs;$(ExecutablePath)</ExecutablePath>
     <ReferencePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libs;$(ReferencePath)</ReferencePath>
