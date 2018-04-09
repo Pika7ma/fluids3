@@ -1,9 +1,16 @@
 # git ignore file
-/fluids_v3.VC.db
-/vc100.pdb
-/.vs/
-/output/
-/fluids_v3.exe
-/fluids_v3.exp
-/fluids_v3.lib
-/fluids_v3.VC.VC.opendb
+fluids_v3.VC.db
+vc100.pdb
+.vs/
+output/
+fluids_v3.exe
+fluids_v3.exp
+fluids_v3.lib
+fluids_v3.VC.VC.opendb
+DebugGPU/
+fluids_v3.ilk
+fluids_v3.opensdf
+fluids_v3.pdb
+fluids_v3.sdf
+fluids_v3.suo
+ipch/

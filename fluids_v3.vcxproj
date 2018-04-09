@@ -40,7 +40,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -78,9 +78,9 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ReleaseGPU\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libs;$(IncludePath);C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include;D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libs;$(IncludePath);C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\include</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\Codes\Libraries\trunk\combined\include;C:\ProgramData\NVIDIA Corporation\NVIDIA GPU Computing SDK 4.2\C\common\inc;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\include;C:\Program Files %28x86%29\NVIDIA Corporation\Cg\include;$(IncludePath)</IncludePath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libs;$(LibraryPath);C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\Win32;D:\Pika Ma\Documents\Visual Studio 2015\Projects\fluids3</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">libs;$(LibraryPath);C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v8.0\lib\Win32</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\Codes\Libraries\trunk\combined\lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\lib\x64;C:\Program Files %28x86%29\NVIDIA Corporation\Cg\lib.x64;$(LibraryPath)</LibraryPath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\Codes\Libraries\trunk\combined\include;C:\ProgramData\NVIDIA Corporation\NVIDIA GPU Computing SDK 4.2\C\common\inc;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\include;C:\Program Files %28x86%29\NVIDIA Corporation\Cg\include;$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\Codes\Libraries\trunk\combined\lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v4.2\lib\x64;C:\Program Files %28x86%29\NVIDIA Corporation\Cg\lib.x64;$(LibraryPath)</LibraryPath>
